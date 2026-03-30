@@ -19,9 +19,10 @@ except:
             print("Package can't be installed. We must to kill the process.")
             exit()
 easygui.msgbox("Uwaga! Gra najlepiej działa na Linuxie. Jeżeli znajdziesz jakikolwiek błąd zgłoś nam to na maila the_beginning_of_modern_times@galaxyhit.com a my spróbujemy to naprawić!")
-if len(os.getcwd()) == 1:
+print(os.listdir())
+if len(os.listdir()) == 1:
     print("It's ok, we're only installing important thinks, you can find it below. Do not close this frame please.")
-elif not "opened_data.data" in os.getcwd():
+elif not "opened_data.data" in os.listdir():
     w = easygui.enterbox("Nie znaleźliśmy żadnego pliku z zapisanymi danymi dotyczącymi poprzedniego otwarcia aplikacji, ale wygląda na to, że w tym folderze już są pliki. Zaleca się, aby gra znajdowała się w jednym folderze, ponieważ tworzy własne pliki, co może w przyszłości powodować problemy z czytelnością. Chcesz wybrać folder, w którym ta gra będzie zlokalizowana, czy wybrać domyślny folder dla tej gry? Jeżeli chcesz, wpisz nazwę tego folderu i kliknij \"OK\". W przeciwnym razie kliknij przycisk cancel, będziemy wiedzieli wtedy, że nie chcesz instalować.","Początek Nowożytności - instalacja",os.path.expanduser("~")+"/tbomt")
     if w == None:
         easygui.msgbox("Bye!")
