@@ -64,6 +64,7 @@ except:
             exit()
 #szukanie pliku uninstall.py
 if os.path.exists("uninstall.py"):
+    w = easygui.buttonbox("Jesteś w zapisanym")
     print("uninstalling!")
     import subprocess
     import sys
