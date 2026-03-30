@@ -18,22 +18,30 @@ except:
         except:
             print("Package can't be installed. We must to kill the process.")
             exit()
-
+easygui.msgbox("Uwaga! Gra najlepiej działa na Linuxie. Jeżeli znajdziesz jakikolwiek błąd zgłoś nam to na maila the_beginning_of_modern_times@galaxyhit.com a my spróbujemy to naprawić!")
 if len(os.getcwd()) == 1:
     print("It's ok, we're only installing important thinks, you can find it below. Do not close this frame please.")
 elif not "opened_data.data" in os.getcwd():
     w = easygui.enterbox("Nie znaleźliśmy żadnego pliku z zapisanymi danymi dotyczącymi poprzedniego otwarcia aplikacji, ale wygląda na to, że w tym folderze już są pliki. Zaleca się, aby gra znajdowała się w jednym folderze, ponieważ tworzy własne pliki, co może w przyszłości powodować problemy z czytelnością. Chcesz wybrać folder, w którym ta gra będzie zlokalizowana, czy wybrać domyślny folder dla tej gry? Jeżeli chcesz, wpisz nazwę tego folderu i kliknij \"OK\". W przeciwnym razie kliknij przycisk cancel, będziemy wiedzieli wtedy, że nie chcesz instalować.","Początek Nowożytności - instalacja",os.path.expanduser("~")+"/tbomt")
     if w == None:
         easygui.msgbox("Bye!")
+        exit()
     else:
         print("Wait...")
         os.makedirs(w, exist_ok=True)
         file = open(w+"/opened_data.data","w+")
         file.write("0")
         file.close()
-        file = open(w+"/program.py")
+        file = open(w+"/program.py","w+")
         import requests
-        file.write()
+        file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/program.py").text)
+        file.close()
+        file = open(w+"/uninstall.py","w+")
+        file.write("import os\nos.remove(\""+__file__+"\")")
+        import sys
+        import subprocess
+        subprocess.run([sys.executable, w+"/program.py"])
+        exit()
 try:
     import pygame
 except:
@@ -53,7 +61,13 @@ except:
         except:
             print("Package can't be installed. We must to kill the process.")
             exit()
-
+#szukanie pliku uninstall.py
+if os.path.exists("uninstall.py"):
+    print("uninstalling!")
+    import subprocess
+    import sys
+    subprocess.run([sys.executable, "uninstall.py"])
+    os.remove("uninstall.py")
 pygame.init()  # initialize pygame modules (including font)
 
 x = 1920
@@ -171,8 +185,9 @@ while game != "quit":
     okno.fill((0, 0, 0))
 
     if game == "menu":  # gra to menu
-        draw_text(okno, "center", "Welcome to the Life Simulation!", (round(x / 2), round(y / 2 - y / 20)), size=round((x + y) / 100), font_name="Monospace")
-        draw_text(okno, "center", "Enter saved file with simulation data", (round(x / 2), round(y / 2 + y / 20)), size=round((x + y) / 200), font_name="Monospace", is_button=True)
+        draw_text(okno, "center", "Początek Nowożytności", (round(x / 2), round(y / 2 - y / 20)), size=round((x + y) / 100), font_name="Monospace")
+        if draw_text(okno, "center", "Graj", (round(x / 2), round(y / 2 + y / 20)), size=round((x + y) / 200), font_name="Monospace", is_button=True)[1]:
+            draw_text(okno, "center", "Graj", (round(x / 2), round(y / 2 + y / 20)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=(255,255,255))
 
     pygame.display.update()
     clock.tick(60)  # ogranicz do ~60 FPS
