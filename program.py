@@ -40,7 +40,7 @@ elif not "opened_data.data" in os.getcwd():
         file.write("import os\nos.remove(\""+__file__+"\")")
         import sys
         import subprocess
-        subprocess.run([sys.executable, w+"/program.py"])
+        subprocess.Popen([sys.executable, w+"/program.py"])
         exit()
 try:
     import pygame
