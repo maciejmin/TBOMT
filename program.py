@@ -9,7 +9,7 @@ else:
 try:
     import easygui
 except:
-    if os.name() == "nt":
+    if os.name == "nt":
         print("You are on Windows, wait, we are installing important thinks")
         os.system("pip install easygui")
         try:
