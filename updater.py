@@ -14,3 +14,5 @@ def update():
         #aktualizujemy
         import os
         os.remove("program.py")
+        file.write(web_file)
+        file.close()
