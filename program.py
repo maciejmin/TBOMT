@@ -1,7 +1,5 @@
 #vTest
 import os
-import updater
-updater.update()
 if os.name == "nt":
     print("setting slash by \\.")
     skos = "\\"
@@ -29,6 +27,18 @@ except:
             exit()
 easygui.msgbox("Uwaga! Gra najlepiej działa na Linuxie i nie jest zalecana dla osób z epilepsją fotogenną oraz w wieku poniżej 13 lat ponieważ zawiera szybkie animacje powodujące nienadążający wzrok za efektami u młodszych osób.")
 easygui.msgbox("Jeżeli znajdziesz jakikolwiek błąd zgłoś nam to na maila the_beginning_of_modern_times@galaxyhit.com a my spróbujemy to naprawić!")
+w = easygui.buttonbox("Czy chcesz sprawdzić aktualizacje gry? Jeżeli będzie taka możliwość zaaktualizujemy automatycznie program. To wymaga połączenia internetowego co może powodować opłaty."," ",["Tak","Nie"])
+if w == "Tak":
+    import updater
+    updater.update()
+def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_open="w+"): #jeżeli chcemy request_link wpisujemy None w what_to_write, przeciwnie robimy odwrotnie, jeśli nie chcemy nic to w obu miejscach None
+    file = open(localization_or_name,how_to_open)
+    if what_to_write != None:
+        file.write(what_to_write)
+    elif request_link != None:
+        import requests
+        file.write(requests.get(request_link).text)
+    file.close()
 print(os.listdir())
 if len(os.listdir()) == 1:
     print("It's ok, we're only installing important thinks, you can find it below. Do not close this frame please.")
@@ -40,15 +50,10 @@ elif not "opened_data.data" in os.listdir():
     else:
         print("Wait...")
         os.makedirs(w, exist_ok=True)
-        file = open(w+skos+"opened_data.data","w+")
-        file.write("0")
-        file.close()
-        file = open(w+skos+"program.py","w+")
-        import requests
-        file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/program.py").text)
-        file.close()
-        file = open(w+skos+"uninstall.py","w+")
-        file.write("import os\nos.remove(\""+__file__+"\")")
+        createfile(w+skos+"opened_data.data","0")
+        createfile(w+skos+"program.py",request_link="https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/program.py")
+        createfile(w+skos+"uninstall.py","import os\nos.remove(\""+__file__+"\")")
+        createfile(w+skos+"updater.py",request_link="https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py")
         import sys
         import subprocess
         print(sys.executable)
