@@ -1,4 +1,13 @@
+#vTest
 import os
+import updater
+updater.update()
+if os.name == "nt":
+    print("setting slash by \\.")
+    skos = "\\"
+else:
+    print("WOW, Linux or MacOs, setting slash by default /")
+    skos = "/"
 try:
     import easygui
 except:
@@ -18,30 +27,32 @@ except:
         except:
             print("Package can't be installed. We must to kill the process.")
             exit()
-easygui.msgbox("Uwaga! Gra najlepiej działa na Linuxie. Jeżeli znajdziesz jakikolwiek błąd zgłoś nam to na maila the_beginning_of_modern_times@galaxyhit.com a my spróbujemy to naprawić!")
+easygui.msgbox("Uwaga! Gra najlepiej działa na Linuxie i nie jest zalecana dla osób z epilepsją fotogenną oraz w wieku poniżej 13 lat ponieważ zawiera szybkie animacje powodujące nienadążający wzrok za efektami u młodszych osób.")
+easygui.msgbox("Jeżeli znajdziesz jakikolwiek błąd zgłoś nam to na maila the_beginning_of_modern_times@galaxyhit.com a my spróbujemy to naprawić!")
 print(os.listdir())
 if len(os.listdir()) == 1:
     print("It's ok, we're only installing important thinks, you can find it below. Do not close this frame please.")
 elif not "opened_data.data" in os.listdir():
-    w = easygui.enterbox("Nie znaleźliśmy żadnego pliku z zapisanymi danymi dotyczącymi poprzedniego otwarcia aplikacji, ale wygląda na to, że w tym folderze już są pliki. Zaleca się, aby gra znajdowała się w jednym folderze, ponieważ tworzy własne pliki, co może w przyszłości powodować problemy z czytelnością. Chcesz wybrać folder, w którym ta gra będzie zlokalizowana, czy wybrać domyślny folder dla tej gry? Jeżeli chcesz, wpisz nazwę tego folderu i kliknij \"OK\". W przeciwnym razie kliknij przycisk cancel, będziemy wiedzieli wtedy, że nie chcesz instalować.","Początek Nowożytności - instalacja",os.path.expanduser("~")+"/tbomt")
+    w = easygui.enterbox("Nie znaleźliśmy żadnego pliku z zapisanymi danymi dotyczącymi poprzedniego otwarcia aplikacji, ale wygląda na to, że w tym folderze już są pliki. Zaleca się, aby gra znajdowała się w jednym folderze, ponieważ tworzy własne pliki, co może w przyszłości powodować problemy z czytelnością. Chcesz wybrać folder, w którym ta gra będzie zlokalizowana, czy wybrać domyślny folder dla tej gry? Jeżeli chcesz, wpisz nazwę tego folderu i kliknij \"OK\". W przeciwnym razie kliknij przycisk cancel, będziemy wiedzieli wtedy, że nie chcesz instalować.","Początek Nowożytności - instalacja",os.path.expanduser("~")+skos+"tbomt")
     if w == None:
         easygui.msgbox("Bye!")
         exit()
     else:
         print("Wait...")
         os.makedirs(w, exist_ok=True)
-        file = open(w+"/opened_data.data","w+")
+        file = open(w+skos+"opened_data.data","w+")
         file.write("0")
         file.close()
-        file = open(w+"/program.py","w+")
+        file = open(w+skos+"program.py","w+")
         import requests
         file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/program.py").text)
         file.close()
-        file = open(w+"/uninstall.py","w+")
+        file = open(w+skos+"uninstall.py","w+")
         file.write("import os\nos.remove(\""+__file__+"\")")
         import sys
         import subprocess
-        subprocess.Popen([sys.executable, w+"/program.py"])
+        print(sys.executable)
+        subprocess.Popen([sys.executable, w+skos+"program.py"])
         exit()
 try:
     import pygame
@@ -71,13 +82,24 @@ if os.path.exists("uninstall.py"):
     subprocess.run([sys.executable, "uninstall.py"])
     os.remove("uninstall.py")
 pygame.init()  # initialize pygame modules (including font)
-
+if os.path.exists("icon.png"):
+    pass
+else:
+    import requests
+    file = open("icon.png","wb")
+    file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/main/icon.png").content)
+    file.close()
 x = 1920
 y = 1080
+icon = pygame.image.load("icon.png")
 okno = pygame.display.set_mode([x, y], pygame.RESIZABLE | pygame.DOUBLEBUF)
-pygame.display.set_caption("Life Simulation")
+pygame.display.set_caption("Początek Nowożytności")
+pygame.display.set_icon(icon)
 
 clock = pygame.time.Clock()  # smooth the frame rate and resizing
+
+# Obsługa scrolla
+current_scroll = False  # False, 1 (scroll góra), lub -1 (scroll dół)
 
 
 def draw_text(
@@ -115,8 +137,9 @@ def draw_text(
         button_color: Kolor tła przycisku.
 
     Returns:
-        [is_hovered, is_clicked]: Lista gdzie is_hovered=1 jeśli mysz jest nad elementem, 
-                                  is_clicked=1 jeśli przycisk myszy jest wciśnięty nad elementem.
+        [is_hovered, is_clicked, scroll]: Lista gdzie is_hovered=1 jeśli mysz jest nad elementem, 
+                                         is_clicked=1 jeśli przycisk myszy jest wciśnięty nad elementem,
+                                         scroll=1 (scroll góra), -1 (scroll dół), False (brak scrollu).
     """
 
     font = pygame.font.SysFont(font_name, size, bold=bold, italic=italic)
@@ -152,9 +175,13 @@ def draw_text(
         
         # Sprawdzenie hover i click
         mouse_pos = pygame.mouse.get_pos()
-        is_hovered = 1 if button_rect.collidepoint(mouse_pos) else 0
-        is_clicked = 1 if is_hovered and pygame.mouse.get_pressed()[0] else 0
-        return [is_hovered, is_clicked]
+        is_hovered = True if button_rect.collidepoint(mouse_pos) else False
+        is_clicked = True if is_hovered and pygame.mouse.get_pressed()[0] else False
+        
+        # Sprawdzenie scrolla gdy mysz jest nad przyciskiem
+        scroll = current_scroll if is_hovered else False
+        
+        return [is_hovered, is_clicked, scroll]
 
     surface.blit(surf, rect)
     
@@ -162,15 +189,31 @@ def draw_text(
     mouse_pos = pygame.mouse.get_pos()
     is_hovered = 1 if rect.collidepoint(mouse_pos) else 0
     is_clicked = 1 if is_hovered and pygame.mouse.get_pressed()[0] else 0
-    return [is_hovered, is_clicked]
+    
+    # Sprawdzenie scrolla gdy mysz jest nad elementem
+    scroll = current_scroll if is_hovered else False
+    
+    return [is_hovered, is_clicked, scroll]
 
+def buttonbox(question:str,buttons:list,text_size:int,buttons_size:int): #maine
+        draw_text(okno,"center","       ",[round(x/2),round(y/2)],round((x + y) / 10),"Monospace",is_button=True,button_padding=[10,100])
+        draw_text(okno,"center",question,[round(x/2),round(y/3.2)],round((x + y) / text_size),"Monospace",is_button="False")
+        for i in range(len(buttons)):
+            if draw_text(okno,"center",buttons[i],[round(x/len(buttons))*i+round(x/len(buttons)/2),round(y/1.5)],round((x + y) / buttons_size),"Monospace",is_button=True)[0]:
+                if draw_text(okno,"center",buttons[i],[round(x/len(buttons))*i+round(x/len(buttons)/2),round(y/1.5)],round((x + y) / buttons_size),"Monospace",is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                    return i
 
 game = "menu"
-
+rozmiar = ["Bardzo malutki (1 biom)","Malutki (2 biomy)","Mały (3 biomy)","Zwykły (5 biomów)","Duży (6 biomów) Zalecany","Bardzo duży (8 biomów)","Wielki (10 biomów)","Ogromny (15 biomów)","Gigantyczny (20 biomów)"]
 while game != "quit":
+    current_scroll = False  # Reset scrolla na początku każdej iteracji
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             game = "quit"
+        elif event.type == pygame.MOUSEWHEEL:
+            # Obsługa scrolla: event.y zawiera kierunek (dodatni = scroll góra, ujemny = scroll dół)
+            current_scroll = 1 if event.y > 0 else -1
         elif event.type == pygame.VIDEORESIZE:
             # Update window size when the user resizes the window
             x, y = event.w, event.h
@@ -188,9 +231,31 @@ while game != "quit":
 
     if game == "menu":  # gra to menu
         draw_text(okno, "center", "Początek Nowożytności", (round(x / 2), round(y / 2 - y / 20)), size=round((x + y) / 100), font_name="Monospace")
-        if draw_text(okno, "center", "Graj", (round(x / 2), round(y / 2 + y / 20)), size=round((x + y) / 200), font_name="Monospace", is_button=True)[1]:
-            draw_text(okno, "center", "Graj", (round(x / 2), round(y / 2 + y / 20)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=(255,255,255))
-
+        if draw_text(okno, "center", "Graj", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
+            if draw_text(okno, "center", "-  Graj  -", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                scroll = 4
+                game = "create"
+        if draw_text(okno, "center", "Otwórz ustawienia", (round(x / 2), round(y / 2 + y / 20)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
+            if draw_text(okno, "center", "-  Otwórz ustawienia  -", (round(x / 2), round(y / 2 + y / 20)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                game = "settings"
+        if draw_text(okno, "center", "Wyjdź z gry", (round(x / 2), round(y / 2 + y / 10)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
+            if draw_text(okno, "center", "-  Wyjdź z gry  -", (round(x / 2), round(y / 2 + y / 10)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                game = "quit"
+    elif game == "create":
+        try:
+            file = open("datas.data","r+") #był wcześniej utworzony świat
+            game = "open_world"
+        except: #najwidoczniej trzeba utworzyć
+            if buttonbox("Tworzenie świata, dobierz odpowiednie tobie opcje:",["Wróć","Ok"],100,100) == 0:
+                game = "menu"
+            elif buttonbox("Tworzenie świata, dobierz odpowiednie tobie opcje:",["Wróć","Ok"],100,100) == 1:
+                #ustaw tutaj grę i zapisz i graj game = "play"
+                pass
+            scroll += draw_text(okno, "center", "Rozmiar świata: "+rozmiar[scroll], (round(x / 2), round(y / 2)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[2]
+            if scroll <= -1:
+                scroll = 0
+            elif scroll >= 9:
+                scroll = 8
     pygame.display.update()
     clock.tick(60)  # ogranicz do ~60 FPS
 
