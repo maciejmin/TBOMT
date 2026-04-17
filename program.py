@@ -30,7 +30,17 @@ easygui.msgbox("Jeżeli znajdziesz jakikolwiek błąd zgłoś nam to na maila th
 w = easygui.buttonbox("Czy chcesz sprawdzić aktualizacje gry? Jeżeli będzie taka możliwość zaaktualizujemy automatycznie program. To wymaga połączenia internetowego co może powodować opłaty."," ",["Tak","Nie"])
 if w == "Tak":
     import updater
-    updater.update()
+    respond = updater.update_program()
+    if respond == "actual":
+        easygui.msgbox("Wersja programu jest aktualna. Nie trzeba nic aktualizować.")
+    elif respond == "updated":
+        easygui.msgbox("Program został zaaktualizowany na nowszą wersję! Uruchomimy go ponownie aby zapewnić mu lepszą sprawność.")
+        import subprocess
+        import sys
+        subprocess.Popen([sys.executable,__file__])
+    w = easygui.buttonbox("Uwaga, jest też możliwość, że dodatki do gry wymagają aktualizacji, takie jak np. ruch gracza itp. Czy chcesz poszukać aktualizacji dodatków?"," ",["Tak","Nie"])
+    if w == "Tak":
+        respond = updater.update_extensions()
 def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_open="w+"): #jeżeli chcemy request_link wpisujemy None w what_to_write, przeciwnie robimy odwrotnie, jeśli nie chcemy nic to w obu miejscach None
     file = open(localization_or_name,how_to_open)
     if what_to_write != None:
