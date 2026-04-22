@@ -25,10 +25,18 @@ except:
         except:
             print("Package can't be installed. We must to kill the process.")
             exit()
+def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_open="w+"): #jeżeli chcemy request_link wpisujemy None w what_to_write, przeciwnie robimy odwrotnie, jeśli nie chcemy nic to w obu miejscach None
+    file = open(localization_or_name,how_to_open)
+    if what_to_write != None:
+        file.write(what_to_write)
+    elif request_link != None:
+        import requests
+        file.write(requests.get(request_link).text)
+    file.close()
 easygui.msgbox("Uwaga! Gra najlepiej działa na Linuxie i nie jest zalecana dla osób z epilepsją fotogenną oraz w wieku poniżej 13 lat ponieważ zawiera szybkie animacje powodujące nienadążający wzrok za efektami u młodszych osób.")
 easygui.msgbox("Jeżeli znajdziesz jakikolwiek błąd zgłoś nam to na maila the_beginning_of_modern_times@galaxyhit.com a my spróbujemy to naprawić!")
 w = easygui.buttonbox("Czy chcesz sprawdzić aktualizacje gry? Jeżeli będzie taka możliwość zaaktualizujemy automatycznie program. To wymaga połączenia internetowego co może powodować opłaty."," ",["Tak","Nie"])
-if w == "Tak":
+def updating():
     import updater
     respond = updater.update_program()
     if respond == "actual":
@@ -38,17 +46,32 @@ if w == "Tak":
         import subprocess
         import sys
         subprocess.Popen([sys.executable,__file__])
+        exit()
     w = easygui.buttonbox("Uwaga, jest też możliwość, że dodatki do gry wymagają aktualizacji, takie jak np. ruch gracza itp. Czy chcesz poszukać aktualizacji dodatków?"," ",["Tak","Nie"])
     if w == "Tak":
         respond = updater.update_extensions()
-def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_open="w+"): #jeżeli chcemy request_link wpisujemy None w what_to_write, przeciwnie robimy odwrotnie, jeśli nie chcemy nic to w obu miejscach None
-    file = open(localization_or_name,how_to_open)
-    if what_to_write != None:
-        file.write(what_to_write)
-    elif request_link != None:
-        import requests
-        file.write(requests.get(request_link).text)
-    file.close()
+        if len(respond) == 2:
+            if respond[1][:9] == "[Errno 2]":
+                w = easygui.buttonbox("Aktualizator wysypał się i wyrzucił błąd. Nasza gra jednak przewidziała, że błąd tego typu może wystąpić dlatego mamy na niego rozwiązanie.\nChodzi o to, że brakuje pliku który poda źródła dodatków, czy chcesz utworzyć ten plik?"," ",["Tak","Nie"])
+                if w == "Tak": #createfile
+                    createfile("sources.list")
+                    w = easygui.buttonbox("Mimo to, że nie znane są nam żadne źródła zostaną one utworzone jeżeli chcesz."," ",["Poproszę","Nie, dziękuję"])
+                    if w == "Poproszę":
+                        w = easygui.buttonbox("Uwaga! Musimy pobrać pewną rzecz z internetu, aby mieć możliwość instalacji dodatków. Chcesz to zrobić? To może powodować opłaty w razie korzystania z sieci taryfowej."," ",["Pobierz","Nie pobieraj"])
+                        if w == "Pobierz":
+                            createfile("sources_adder.py",request_link="https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/sources_adder.py")
+                            subprocess.run([sys.executable,os.getcwd()+skos+"sources_adder.py"])
+                            w = easygui.buttonbox("Wydaje się, że udało się utworzyć potrzebne rzeczy. Czy chcesz uruchomić aktualizator dodatków ponownie?"," ",["Tak","Nie"])
+                            if w == "Tak":
+                                updating()
+            w = easygui.indexbox("Akualizator wyrzucił błąd: szczegóły w \"Szczegóły dla programisty\". Jeśli błąd się powtarza, a gracz nie zna rozwiązania problemu można nam to zgłosić."," ",["Szczegóły dla programisty","Zaniechaj aktualizację"])
+            if w == 0:
+                w = easygui.codebox("Edycja tekstu poniżej nic nie zmieni. Poniżej znajdują się szczegóły wysypania się kodu aktualizatora:"," ","Aktualizator wysypał się. Informacja od aktualizatora:\n"+respond[0]+"\n\nSzczegóły błędu:\n"+respond[1]+"\n\nKliknij ok, aby przejść do gry i zaniechać aktualizację, jeżeli jednak chcesz zakończyć grę kliknij cancel lub też X.")
+                if w == None:
+                    easygui.msgbox("Bye!")
+                    exit()
+if w == "Tak":
+    updating()
 print(os.listdir())
 if len(os.listdir()) == 1:
     print("It's ok, we're only installing important thinks, you can find it below. Do not close this frame please.")
