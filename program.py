@@ -35,7 +35,6 @@ def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_
     file.close()
 easygui.msgbox("Uwaga! Gra najlepiej działa na Linuxie i nie jest zalecana dla osób z epilepsją fotogenną oraz w wieku poniżej 13 lat ponieważ zawiera szybkie animacje powodujące nienadążający wzrok za efektami u młodszych osób.")
 easygui.msgbox("Jeżeli znajdziesz jakikolwiek błąd zgłoś nam to na maila the_beginning_of_modern_times@galaxyhit.com a my spróbujemy to naprawić!")
-w = easygui.buttonbox("Czy chcesz sprawdzić aktualizacje gry? Jeżeli będzie taka możliwość zaaktualizujemy automatycznie program. To wymaga połączenia internetowego co może powodować opłaty."," ",["Tak","Nie"])
 def updating():
     import updater
     respond = updater.update_program()
@@ -70,8 +69,6 @@ def updating():
                 if w == None:
                     easygui.msgbox("Bye!")
                     exit()
-if w == "Tak":
-    updating()
 print(os.listdir())
 if len(os.listdir()) == 1:
     print("It's ok, we're only installing important thinks, you can find it below. Do not close this frame please.")
@@ -92,6 +89,9 @@ elif not "opened_data.data" in os.listdir():
         print(sys.executable)
         subprocess.Popen([sys.executable, w+skos+"program.py"])
         exit()
+w = easygui.buttonbox("Czy chcesz sprawdzić aktualizacje gry? Jeżeli będzie taka możliwość zaaktualizujemy automatycznie program. To wymaga połączenia internetowego co może powodować opłaty."," ",["Tak","Nie"])
+if w == "Tak":
+    updating()
 try:
     import pygame
 except:
