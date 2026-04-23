@@ -1,4 +1,6 @@
 #vTest
+import subprocess
+import sys
 import os
 if os.name == "nt":
     print("setting slash by \\.")
@@ -42,8 +44,6 @@ def updating():
         easygui.msgbox("Wersja programu jest aktualna. Nie trzeba nic aktualizować.")
     elif respond == "updated":
         easygui.msgbox("Program został zaaktualizowany na nowszą wersję! Uruchomimy go ponownie aby zapewnić mu lepszą sprawność.")
-        import subprocess
-        import sys
         subprocess.Popen([sys.executable,__file__])
         exit()
     w = easygui.buttonbox("Uwaga, jest też możliwość, że dodatki do gry wymagają aktualizacji, takie jak np. ruch gracza itp. Czy chcesz poszukać aktualizacji dodatków?"," ",["Tak","Nie"])
@@ -84,8 +84,6 @@ elif not "opened_data.data" in os.listdir():
         createfile(w+skos+"program.py",request_link="https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/program.py")
         createfile(w+skos+"uninstall.py","import os\nos.remove(\""+__file__+"\")")
         createfile(w+skos+"updater.py",request_link="https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py")
-        import sys
-        import subprocess
         print(sys.executable)
         subprocess.Popen([sys.executable, w+skos+"program.py"],cwd=w)
         exit()
@@ -115,8 +113,6 @@ if w == "Tak":
 if os.path.exists("uninstall.py"):
     w = easygui.buttonbox("Jesteś w zapisanym")
     print("uninstalling!")
-    import subprocess
-    import sys
     subprocess.run([sys.executable, "uninstall.py"])
     os.remove("uninstall.py")
 pygame.init()  # initialize pygame modules (including font)
