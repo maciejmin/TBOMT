@@ -1,4 +1,4 @@
-#vTest_0.0.1
+#vTest_0.0.2
 import subprocess
 import sys
 import os
@@ -69,6 +69,12 @@ def updating():
                 if w == None:
                     easygui.msgbox("Bye!")
                     exit()
+        else:
+            result = ""
+            for i in respond: #aby zrobic kilka linii, jak wysyla sie listę to jest nieschludnie
+                result += i
+                result += "\n"
+            easygui.codebox("Uwaga, wygląda na to, że aktualizacja dodatków się udała! Jeżeli chcesz, możesz przeczytać log."," ",result)
 print(os.listdir())
 if len(os.listdir()) == 1:
     print("It's ok, we're only installing important thinks, you can find it below. Do not close this frame please.")
