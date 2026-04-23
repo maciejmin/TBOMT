@@ -45,7 +45,7 @@ def update_extensions():
     sources = file.read().splitlines()
     file.close
     everyone = [] #wszystkie ze zwrotem informacji
-    for i in sources: #plik
+    for i in sources: #plik caly zrodel
         current = "" #jeden z listy
         lista = [] #lista linijki, [0] = źródło, [1] = lokalizacja/nazwa
         for j in i: #linijka, bo sources oddzielane są |. np. "source.com/source.py|home/liveuser/tbomt/extensions/source.py"
@@ -54,17 +54,21 @@ def update_extensions():
             else:
                 lista.append(current)
                 current = ""
-        lista.append(current)
-        zrodlo = requests.get(lista[0]).text
-        wersja_zrodla = zrodlo.splitlines()[0]
-        plik = open(lista[1],"r").read().splitlines()[0]
-        if wersja_zrodla == plik:
-            everyone.append(str(i)+": Up to date.")
-        else:
-            try:
-                file = open(i,"w+")
-                file.write(zrodlo)
-                file.close()
-                everyone.append(str(i)+": Updated to "+wersja_zrodla+" from "+plik+"!")
-            except:
-                everyone.append(str(i)+": Failure.")
+        print(len(lista))
+        if len(lista) == 2:
+            print(i)
+            lista.append(current)
+            zrodlo = requests.get(lista[1]).text
+            wersja_zrodla = zrodlo.splitlines()[0]
+            plik = open(lista[2],"r").read().splitlines()[0]
+            if wersja_zrodla == plik:
+                everyone.append(str(i)+": Up to date.")
+            else:
+                try:
+                    file = open(i,"w+")
+                    file.write(zrodlo)
+                    file.close()
+                    everyone.append(str(i)+": Updated to "+wersja_zrodla+" from "+plik+"!")
+                except:
+                    everyone.append(str(i)+": Failure.")
+    return everyone
