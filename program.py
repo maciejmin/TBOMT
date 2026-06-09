@@ -10,12 +10,15 @@ else:
     skos = "/"
 try:
     import easygui
+    import requests
 except:
     if os.name == "nt":
         print("You are on Windows, wait, we are installing important thinks")
         os.system("pip install easygui")
+        os.system("pip install requests")
         try:
             import easygui
+            import requests
         except:
             print("Package can't be installed. We must to kill the process.")
             exit()
