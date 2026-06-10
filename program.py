@@ -1,4 +1,4 @@
-#vTest_0.0.2
+#vTest_0.0.3
 import subprocess
 import sys
 import os
@@ -30,6 +30,13 @@ except:
         except:
             print("Package can't be installed. We must to kill the process.")
             exit()
+if os.path.dirname(__file__) != os.getcwd():
+    w = easygui.msgbox("Gra prawdopodobnie została otwarta ręcznie w nie poprawnym folderze. Zmienimy jej katalog na poprawny!","TBOMT")
+    if w == None:
+        easygui.msgbox("Bye!")
+        exit()
+    else:
+        os.chdir(os.path.dirname(__file__))
 def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_open="w+"): #jeżeli chcemy request_link wpisujemy None w what_to_write, przeciwnie robimy odwrotnie, jeśli nie chcemy nic to w obu miejscach None
     file = open(localization_or_name,how_to_open)
     if what_to_write != None:
@@ -99,7 +106,7 @@ elif not "opened_data.data" in os.listdir():
 try:
     import pygame
 except:
-    if os.name() == "nt":
+    if os.name == "nt":
         print("You are on Windows, wait, we are installing important thinks")
         os.system("pip install pygame")
         try:
@@ -292,8 +299,7 @@ while game != "quit":
             if buttonbox("Tworzenie świata, dobierz odpowiednie tobie opcje:",["Wróć","Ok"],100,100) == 0:
                 game = "menu"
             elif buttonbox("Tworzenie świata, dobierz odpowiednie tobie opcje:",["Wróć","Ok"],100,100) == 1:
-                #ustaw tutaj grę i zapisz i graj game = "play"
-                pass
+                game = "open_world"
             scroll += draw_text(okno, "center", "Rozmiar świata: "+rozmiar[scroll], (round(x / 2), round(y / 2)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[2]
             if scroll <= -1:
                 scroll = 0
