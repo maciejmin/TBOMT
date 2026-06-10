@@ -1,4 +1,4 @@
-#vTest_0.0.3
+#vTest_0.0.4
 import subprocess
 import sys
 import os
@@ -20,15 +20,20 @@ except:
             import easygui
             import requests
         except:
-            print("Package can't be installed. We must to kill the process.")
+            print("Package can't be installed. We must kill the process.")
             exit()
     else:
-        print("You are on systems like Linux or MacOs, so we must to use basic commands.")
+        try:
+            import requests
+        except:
+            print("Twój system operacyjny jest niekompletny, spróbuj doinstalować requests: pip3/pip install requests lub sudo apt install python3/python requests")
+            exit()
+        print("You are on systems like Linux or MacOs, so we must use basic commands.")
         os.system("python3 -m pip install easygui")
         try:
             import easygui
         except:
-            print("Package can't be installed. We must to kill the process.")
+            print("Package can't be installed. We must kill the process.")
             exit()
 if os.path.dirname(__file__) != os.getcwd():
     w = easygui.msgbox("Gra prawdopodobnie została otwarta ręcznie w nie poprawnym folderze. Zmienimy jej katalog na poprawny!","TBOMT")
@@ -42,8 +47,9 @@ def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_
     if what_to_write != None:
         file.write(what_to_write)
     elif request_link != None:
-        import requests
-        file.write(requests.get(request_link).text)
+        r = requests.get(request_link)
+        r.encoding = "utf-8"
+        file.write(r.text)
     file.close()
 easygui.msgbox("Uwaga! Gra najlepiej działa na Linuxie i nie jest zalecana dla osób z epilepsją fotogenną oraz w wieku poniżej 13 lat ponieważ zawiera szybkie animacje powodujące nienadążający wzrok za efektami u młodszych osób.")
 easygui.msgbox("Jeżeli znajdziesz jakikolwiek błąd zgłoś nam to na maila the_beginning_of_modern_times@galaxyhit.com a my spróbujemy to naprawić!")
