@@ -1,4 +1,4 @@
-#vTest_0.0.4
+#vTest_0.0.5
 import subprocess
 import sys
 import os
@@ -43,7 +43,7 @@ if os.path.dirname(__file__) != os.getcwd():
     else:
         os.chdir(os.path.dirname(__file__))
 def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_open="w+"): #jeżeli chcemy request_link wpisujemy None w what_to_write, przeciwnie robimy odwrotnie, jeśli nie chcemy nic to w obu miejscach None
-    file = open(localization_or_name,how_to_open)
+    file = open(localization_or_name,how_to_open,encoding="utf-8")
     if what_to_write != None:
         file.write(what_to_write)
     elif request_link != None:
@@ -311,6 +311,17 @@ while game != "quit":
                 scroll = 0
             elif scroll >= 9:
                 scroll = 8
+    elif game == "settings":
+        draw_text(okno, "center", "Ustawienia Początku Nowożytności", (round(x / 2), round(y / 2 - y / 20)), size=round((x + y) / 100), font_name="Monospace")
+        if draw_text(okno, "center", "Ustawienia Dodatków", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
+            if draw_text(okno, "center", "-  Zarządzaj dodatkami i ich właściwościami.  -", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                game = "addons"
+        if draw_text(okno, "center", "Ustawienia Graficzne", (round(x / 2), round(y / 2 + y / 20)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
+            if draw_text(okno, "center", "-  Zarządzaj grafiką, cieniami itp.  -", (round(x / 2), round(y / 2 + y / 20)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                game = "graphics"
+        if draw_text(okno, "center", "Wróć do menu", (round(x / 2), round(y / 2 + y / 10)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
+            if draw_text(okno, "center", "-  Wróć do menu głównego Początku Nowożytności.  -", (round(x / 2), round(y / 2 + y / 10)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                game = "menu"
     pygame.display.update()
     clock.tick(60)  # ogranicz do ~60 FPS
 
