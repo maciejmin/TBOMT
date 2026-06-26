@@ -1,4 +1,4 @@
-#vTest|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/extensiondownloader.py
+#v0.1|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/extensiondownloader.py
 #program służy do pobrania extensions z katalogu extensions, następnie wgranie go do pliku to_do.extensions, który zawiera każdą linię itd. w której która extension. Potem otwiera compiler.py który wysyła wszystko do program.py ale przed tem tqorzy kopię zapasową tego poprzedniego pliku.
 import os
 if os.name == "nt":
@@ -24,8 +24,8 @@ except Exception as e:
                     if katalog_ex[i] == slash:
                         break
                 print(katalog_ex[:i]) #katalog powyżej
-                file = open(katalog_ex[:i]+slash+"uninstall.py","w+")
-                file.write("import os\nos.remove(\""+katalog_ex+"\")\nfile = open(\"program.py\",\"w+\")\nimport requests\nfile.write(requests.get(\"https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/program.py\").text)\nimport subprocess\nimport sys\nsubprocess.Popen([sys.executable, \"program.py\"])")
+                file = open(katalog_ex[:i]+slash+"uninstall.py","w+",encoding="utf-8")
+                file.write("import os\nos.remove(\""+katalog_ex+"\")\nfile = open(\"program.py\",\"w+\",encoding=\"utf-8\")\nimport requests\nfile.write(requests.get(\"https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/program.py\").text)\nimport subprocess\nimport sys\nsubprocess.Popen([sys.executable, \"program.py\"])")
                 import subprocess
                 import sys
                 subprocess.Popen([sys.executable,katalog_ex[:i]+slash+"uninstall.py"])
