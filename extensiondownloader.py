@@ -1,5 +1,5 @@
-#v0.1|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/extensiondownloader.py
-#program służy do pobrania extensions z katalogu extensions, następnie wgranie go do pliku to_do.extensions, który zawiera każdą linię itd. w której która extension. Potem otwiera compiler.py który wysyła wszystko do program.py ale przed tem tqorzy kopię zapasową tego poprzedniego pliku.
+#v0.2|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/extensiondownloader.py
+#program służy do pobrania extensions z katalogu extensions, następnie wgranie go do pliku extensions.todo, który zawiera każdą linię itd. w której która extension. Potem otwiera compiler.py który wysyła wszystko do program.py ale przed tem tqorzy kopię zapasową tego poprzedniego pliku.
 import os
 if os.name == "nt":
     slash = "\\" #system microsoft
@@ -7,14 +7,22 @@ else:
     slash = "/" #Linux, MacOs
 katalog_ex = os.getcwd() #oznacza katalog programu
 try:
-    for i in os.listdir(katalog_ex+slash+"extensions"):
+    file = open("extensions.todo","w+",encoding="utf-8")
+    for i in os.listdir(katalog_ex+slash+"extensions"+slash+"basicextensions"): #czytamy najpierw podstawowe dodatki TBOMT
         print(i)
+        if ".py" in i:
+            file.write(i+"|basic extension\n")
+    for i in os.listdir(katalog_ex+slash+"extensions"+slash+"moreextensions"):
+        print(i)
+        if ".py" in i:
+            file.write(i+"|addon\n")
+    file.close()
 except Exception as e:
     import easygui
     easygui.msgbox("Coś poszło nie tak. Plik:\n"+__file__+"\nBłąd:\n"+str(e)+"\nJeżeli błąd jest nietrudny do naprawienia, możesz to zrobić. W przeciwnym razie skontaktuj się z nami. Musimy przerwać program.")
     if str(e)[:9] == "[Errno 2]":
         easygui.msgbox("Wygląda na to, że błąd:\n"+str(e)+"\nJest możliwy do naprawienia! Nie wiemy tylko co go wywołało. Być może przerwałeś etap instalacji programu albo sam się przerwał.\nJest też opcja, że korzystasz z podrobionej wersji tej gry, lub nieaktualizowanej wersji testowej.\n")
-        easygui.msgbox("Co teraz musisz zrobić? Możemy usunąć całą grę i przejść proces instalacji na nowo. Możesz także pobrać z naszego repozytorium folder \"Extensions\" wraz z jego zawartością.\nJeżeli nie wiesz co robić,\nsprawdzimy co poszło nie tak i zainstalujemy grę na nowo.\n")
+        easygui.msgbox("Co teraz musisz zrobić? Możemy usunąć całą grę i przejść proces instalacji na nowo. Możesz także pobrać z naszego repozytorium folder \"extensions\" wraz z jego zawartością.\nJeżeli nie wiesz co robić,\nsprawdzimy co poszło nie tak i zainstalujemy grę na nowo.\n")
         w = easygui.indexbox("Wybór należy do ciebie:","",["Instalacja na nowo, jeżeli wcześniej grałeś w tą grę, usunie to wszystkie dane, osiągnięcia itp.","Sprawdź brakujące pliki, funkcja eksperymentalna, coś może pójść nie tak ale raczej nic się nie stanie","Instaluj folder extensions z naszego repozytorium"])
         if w == 0:
             w = easygui.codebox("Zostaną wykonane następujące czynności (edycja tekstu poniżej nic nie zmieni):"," ","1. Stworzymy plik uninstall.py w katalogu wyżej;\n2. Uruchomimy plik uninstall.py i usuniemy dzięki niemu cały katalog "+os.getcwd()+"\n3. Po usunięciu katalogu zostanie skopiowany z internetu plik program.py zawierający instrukcję ponownej instalacji;\n4. Zostanie uruchomiona gra.")
@@ -28,6 +36,7 @@ except Exception as e:
                 file.write("import os\nos.remove(\""+katalog_ex+"\")\nfile = open(\"program.py\",\"w+\",encoding=\"utf-8\")\nimport requests\nfile.write(requests.get(\"https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/program.py\").text)\nimport subprocess\nimport sys\nsubprocess.Popen([sys.executable, \"program.py\"])")
                 import subprocess
                 import sys
+                print("Uninstall.py zajmie się resztą.")
                 subprocess.Popen([sys.executable,katalog_ex[:i]+slash+"uninstall.py"])
             else:
                 easygui.msgbox("Przerwano, koniec instalacji.")
