@@ -1,7 +1,5 @@
-#vTest_0.0.5
-import subprocess
-import sys
-import os
+#vTest_0.0.6
+import subprocess, os, sys, compiler
 if os.name == "nt":
     print("setting slash by \\.")
     skos = "\\"
@@ -51,6 +49,7 @@ def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_
         r.encoding = "utf-8"
         file.write(r.text)
     file.close()
+easygui.msgbox("Za chwilę zadamy kilka pytań przed startem, prosimy o chwilę cierpliwości. Gra została napisana trochę amatorsko, dlatego twórca wymaga textowego okienka zaraz obok. Ale to poprostu wyświetla informację o stanie gry.")
 easygui.msgbox("Uwaga! Gra najlepiej działa na Linuxie i nie jest zalecana dla osób z epilepsją fotogenną oraz w wieku poniżej 13 lat ponieważ zawiera szybkie animacje powodujące nienadążający wzrok za efektami u młodszych osób.")
 easygui.msgbox("Jeżeli znajdziesz jakikolwiek błąd zgłoś nam to na maila the_beginning_of_modern_times@galaxyhit.com a my spróbujemy to naprawić!")
 def updating():
@@ -91,6 +90,9 @@ def updating():
                 result += i
                 result += "\n"
             easygui.codebox("Uwaga, wygląda na to, że aktualizacja dodatków się udała! Jeżeli chcesz, możesz przeczytać log."," ",result)
+            easygui.msgbox("Aby użyć nowych wersji dodatków, uruchomimy grę ponownie.")
+            subprocess.Popen([sys.executable,__file__])
+            exit()
 print(os.listdir())
 if len(os.listdir()) == 1:
     print("It's ok, we're only installing important thinks, you can find it below. Do not close this frame please.")
@@ -133,11 +135,10 @@ w = easygui.buttonbox("Czy chcesz sprawdzić aktualizacje gry? Jeżeli będzie t
 if w == "Tak":
     updating()
 if os.path.exists("uninstall.py"):
-    w = easygui.buttonbox("Jesteś w zapisanym")
+    print("Jest śmieć pozostały po instalacji. Usuniemy go automatycznie!")
     print("uninstalling!")
     subprocess.run([sys.executable, "uninstall.py"])
     os.remove("uninstall.py")
-pygame.init()  # initialize pygame modules (including font)
 if os.path.exists("icon.png"):
     pass
 else:
@@ -147,16 +148,20 @@ else:
     file.close()
 x = 1920
 y = 1080
-icon = pygame.image.load("icon.png")
-okno = pygame.display.set_mode([x, y], pygame.RESIZABLE | pygame.DOUBLEBUF)
-pygame.display.set_caption("Początek Nowożytności")
-pygame.display.set_icon(icon)
+def pygame_inicjalizacja(): #używane na początku i po importach rzeczy specjalnych
+    global icon, okno, clock, current_scroll
+    pygame.init()  # initialize pygame modules (including font)
+    icon = pygame.image.load("icon.png")
+    okno = pygame.display.set_mode([x, y], pygame.RESIZABLE | pygame.DOUBLEBUF)
+    pygame.display.set_caption("Początek Nowożytności")
+    pygame.display.set_icon(icon)
 
-clock = pygame.time.Clock()  # smooth the frame rate and resizing
+    clock = pygame.time.Clock()  # smooth the frame rate and resizing
 
-# Obsługa scrolla
-current_scroll = False  # False, 1 (scroll góra), lub -1 (scroll dół)
+    # Obsługa scrolla
+    current_scroll = False  # False, 1 (scroll góra), lub -1 (scroll dół)
 
+pygame_inicjalizacja()
 
 def draw_text(
     surface,
@@ -252,15 +257,23 @@ def draw_text(
     return [is_hovered, is_clicked, scroll]
 
 def buttonbox(question:str,buttons:list,text_size:int,buttons_size:int): #maine
+        global clicked
         draw_text(okno,"center","       ",[round(x/2),round(y/2)],round((x + y) / 10),"Monospace",is_button=True,button_padding=[10,100])
         draw_text(okno,"center",question,[round(x/2),round(y/3.2)],round((x + y) / text_size),"Monospace",is_button="False")
         for i in range(len(buttons)):
             if draw_text(okno,"center",buttons[i],[round(x/len(buttons))*i+round(x/len(buttons)/2),round(y/1.5)],round((x + y) / buttons_size),"Monospace",is_button=True)[0]:
                 if draw_text(okno,"center",buttons[i],[round(x/len(buttons))*i+round(x/len(buttons)/2),round(y/1.5)],round((x + y) / buttons_size),"Monospace",is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                    clicked = str(i)
+                elif clicked == str(i):
+                    clicked = False
                     return i
+        if clicked == str(i):
+            clicked = False
+            return i
 
 game = "menu"
 rozmiar = ["Bardzo malutki (1 biom)","Malutki (2 biomy)","Mały (3 biomy)","Zwykły (5 biomów)","Duży (6 biomów) Zalecany","Bardzo duży (8 biomów)","Wielki (10 biomów)","Ogromny (15 biomów)","Gigantyczny (20 biomów)"]
+clicked = False
 while game != "quit":
     current_scroll = False  # Reset scrolla na początku każdej iteracji
     
@@ -290,12 +303,21 @@ while game != "quit":
         if draw_text(okno, "center", "Graj", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
             if draw_text(okno, "center", "-  Graj  -", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
                 scroll = 4
+                clicked = "create_menu" #wtedy wiadomo że trzeba poczekać na niego aż oznaczy na False
+            elif clicked == "create_menu":
+                clicked = False
                 game = "create"
         if draw_text(okno, "center", "Otwórz ustawienia", (round(x / 2), round(y / 2 + y / 20)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
             if draw_text(okno, "center", "-  Otwórz ustawienia  -", (round(x / 2), round(y / 2 + y / 20)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                clicked = "settings_menu" #wtedy wiadomo że trzeba poczekać na niego aż oznaczy na False
+            elif clicked == "settings_menu":
+                clicked = False
                 game = "settings"
         if draw_text(okno, "center", "Wyjdź z gry", (round(x / 2), round(y / 2 + y / 10)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
             if draw_text(okno, "center", "-  Wyjdź z gry  -", (round(x / 2), round(y / 2 + y / 10)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                clicked = "quit_menu" #wtedy wiadomo że trzeba poczekać na niego aż oznaczy na False
+            elif clicked == "quit_menu":
+                clicked = False
                 game = "quit"
     elif game == "create":
         try:
@@ -315,12 +337,47 @@ while game != "quit":
         draw_text(okno, "center", "Ustawienia Początku Nowożytności", (round(x / 2), round(y / 2 - y / 20)), size=round((x + y) / 100), font_name="Monospace")
         if draw_text(okno, "center", "Ustawienia Dodatków", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
             if draw_text(okno, "center", "-  Zarządzaj dodatkami i ich właściwościami.  -", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                clicked = "addons_settings" #wtedy wiadomo że trzeba poczekać na niego aż oznaczy na False
+            elif clicked == "addons_settings":
+                clicked = False
                 game = "addons"
         if draw_text(okno, "center", "Ustawienia Graficzne", (round(x / 2), round(y / 2 + y / 20)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
             if draw_text(okno, "center", "-  Zarządzaj grafiką, cieniami itp.  -", (round(x / 2), round(y / 2 + y / 20)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                clicked = "graphics_settings" #wtedy wiadomo że trzeba poczekać na niego aż oznaczy na False
+            elif clicked == "graphics_settings":
+                clicked = False
                 game = "graphics"
         if draw_text(okno, "center", "Wróć do menu", (round(x / 2), round(y / 2 + y / 10)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
             if draw_text(okno, "center", "-  Wróć do menu głównego Początku Nowożytności.  -", (round(x / 2), round(y / 2 + y / 10)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                clicked = "wrocdomenu_settings" #wtedy wiadomo że trzeba poczekać na niego aż oznaczy na False
+            elif clicked == "wrocdomenu_settings":
+                clicked = False
+                game = "menu"
+    elif game == "addons":
+        if buttonbox("Ta opcja zostanie otwarta w nowym oknie!",["Wróć","Ok"],100,100) == 0:
+            game = "settings"
+        elif buttonbox("Ta opcja zostanie otwarta w nowym oknie!",["Wróć","Ok"],100,100) == 1:
+            pygame.quit()
+            try:
+                compiler.do()
+            except Exception as e:
+                easygui.codebox("Niestety compiler wysypał się nieoczekiwanie. Poniżej można znaleźć szczegóły błędu oraz zgłosić je na adres email the_beginning_of_modern_times@galaxyhit.com."," ",e)
+            pygame_inicjalizacja()
+            game = "addons_exitter"
+    elif game == "addons_exitter":
+        w = buttonbox("Jeżeli edytowałeś dodatki, musisz uruchomić ponownie grę, aby zadziałały. Czy chcesz to zrobić teraz?",["Tak","Nie"],150,100)
+        if w == 0:
+            subprocess.Popen([sys.executable,__file__])
+            game = "quit"
+        if w == 1:
+            game = "settings"
+    else: #gdy nie wiadomo
+        draw_text(okno, "center", "404! Nie znaleźliśmy opcji "+game+".", (round(x / 2), round(y / 2 - y / 20)), size=round((x + y) / 100), font_name="Monospace")
+        if draw_text(okno, "center", "Wróć do menu głównego", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
+            if draw_text(okno, "center", "-  Wróć do menu głównego  -", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                clicked = "wrocdomenu_404" #wtedy wiadomo że trzeba poczekać na niego aż oznaczy na False
+            elif clicked == "wrocdomenu_404": #wiemy że trzeba tu poczekać
+                clicked = False
                 game = "menu"
     pygame.display.update()
     clock.tick(60)  # ogranicz do ~60 FPS
