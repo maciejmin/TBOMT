@@ -1,6 +1,7 @@
-#v1.0.1|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py
+#v1.1|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py
 #jezeli jakis dodatek na sources.list nie ma dwóch | nalezy go pominac
 import requests
+import sources_adder
 def update_program():
     print("Uruchamiam uaktualniacz, sprawdzam aktualizacje za pomocą funkcji requests oraz repozytorium Github TBOMT, czekaj...")
     try:
@@ -67,7 +68,11 @@ def update_extensions():
                     file = open(i,"w+",encoding="utf-8")
                     file.write(zrodlo)
                     file.close()
-                    everyone.append(str(i)+": Updated to "+wersja_zrodla+" from "+plik+"!")
+                    everyone.append(str(i)+": "+plik+" → "+wersja_zrodla+".")
                 except:
-                    everyone.append(str(i)+": Failure.")
+                    if "updater.py" in i:
+                        sources_adder.update_updater()
+                        everyone.append(str(i)+": Updated!")
+                    else:
+                        everyone.append(str(i)+": Failure.")
     return everyone
