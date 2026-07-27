@@ -1,11 +1,24 @@
-#vTest_0.0.6
-import subprocess, os, sys, compiler
+#vTest_0.0.7
+print("[0.0] Uruchamiam Początek Nowożytności, inicjuję czas")
+import time
+czas_od_startu = time.time()
+def cosp(tekst): #czas_od_startu_podaj
+    global czas_od_startu
+    print("["+str(round(time.time()-czas_od_startu,8))+"] "+str(tekst))
+
+cosp("Importuję podstawowe biblioteki zewnętrzne...")
+try:
+    import subprocess, os, sys
+except:
+    input("Brak potrzebnych bibliotek, aby uruchomić TBOMT. Dotknij enter aby opuścić grę.")
+cosp("Sprawdzam system operacyjny")
 if os.name == "nt":
     print("setting slash by \\.")
     skos = "\\"
 else:
     print("WOW, Linux or MacOs, setting slash by default /")
     skos = "/"
+cosp("Importuję dodatkowe biblioteki zewnętrzne...")
 try:
     import easygui
     import requests
@@ -33,6 +46,7 @@ except:
         except:
             print("Package can't be installed. We must kill the process.")
             exit()
+cosp("Sprawdzam dane o instalacji gry...")
 if os.path.dirname(__file__) != os.getcwd():
     w = easygui.msgbox("Gra prawdopodobnie została otwarta ręcznie w nie poprawnym folderze. Zmienimy jej katalog na poprawny!","TBOMT")
     if w == None:
@@ -40,6 +54,16 @@ if os.path.dirname(__file__) != os.getcwd():
         exit()
     else:
         os.chdir(os.path.dirname(__file__))
+cosp("Sprawdzam zależności...")
+if os.path.exists("opened_data.data"): #to znaczy że już zainstalowano
+    try:
+        file = open("requirements_tbomt.list","r")
+    except:
+        easygui.textbox("Nie można sprawdzić plików. Wygląda na to, że updater nie wygenerował checklisty. Spójrz na logikę poniżej:"," ","Tylko wersja 1.2 (lub wyższa) updatera generuje check listy. Jeżeli jest niższa niż 1.1, nie może się zaaktualizować do wyższej wersji przez brak możliwości ładowania sources_addera. Oznacza to również, że żaden dodatek nie może się zaaktualizować, ponieważ sources_adder w ogóle się nie uruchamia. Zalecane jest teraz zaaktualizowanie przez program sources_addera (a nie przez updatera), a następnie uruchomienie go. Spowoduje to, że updater zostanie zaaktualizowany, a checklista dodatków zostanie uzupełnionia.\n\n\nProgram zrobi to za ciebie.")
+        file = open("sources_adder.py","w+")
+        file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/sources_adder.py").text)
+        file.close()
+cosp("Składam funkcje...")
 def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_open="w+"): #jeżeli chcemy request_link wpisujemy None w what_to_write, przeciwnie robimy odwrotnie, jeśli nie chcemy nic to w obu miejscach None
     file = open(localization_or_name,how_to_open,encoding="utf-8")
     if what_to_write != None:
@@ -49,6 +73,7 @@ def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_
         r.encoding = "utf-8"
         file.write(r.text)
     file.close()
+print("Koniec, inicjacja gry zajęła "+str(time.time()-czas_od_startu)+" sekund.")
 easygui.msgbox("Za chwilę zadamy kilka pytań przed startem, prosimy o chwilę cierpliwości. Gra została napisana trochę amatorsko, dlatego twórca wymaga textowego okienka zaraz obok. Ale to poprostu wyświetla informację o stanie gry.")
 easygui.msgbox("Uwaga! Gra najlepiej działa na Linuxie i nie jest zalecana dla osób z epilepsją fotogenną oraz w wieku poniżej 13 lat ponieważ zawiera szybkie animacje powodujące nienadążający wzrok za efektami u młodszych osób.")
 easygui.msgbox("Jeżeli znajdziesz jakikolwiek błąd zgłoś nam to na maila the_beginning_of_modern_times@galaxyhit.com a my spróbujemy to naprawić!")
@@ -63,6 +88,7 @@ def updating():
         exit()
     w = easygui.buttonbox("Uwaga, jest też możliwość, że dodatki do gry wymagają aktualizacji, takie jak np. ruch gracza itp. Czy chcesz poszukać aktualizacji dodatków?"," ",["Tak","Nie"])
     if w == "Tak":
+        easygui.buttonbox("Uwaga, czy chcesz zaaktualizować listę dodatków? jeżeli nie chcesz, może być tak, że nie wszystkie dodatki będą wzięte pod uwagę podczas aktualizacji."," ",["Zaaktualizuj","Pozostań przy ostatniej aktualizacji pakietów"],default_choice="Zaaktualizuj")
         respond = updater.update_extensions()
         if len(respond) == 2:
             if respond[1][:9] == "[Errno 2]":
@@ -96,6 +122,22 @@ def updating():
 print(os.listdir())
 if len(os.listdir()) == 1:
     print("It's ok, we're only installing important thinks, you can find it below. Do not close this frame please.")
+    w = easygui.textbox("Krótka notatka, nie zmieściliśmy jej w mniejszym okienku."," ","Uwaga! Wygląda na to, że jesteś w pustym folderze. Prawdopodobnie pobrałeś grę jako pierwszą pośród wszystkich plików w tym folderze. Jeżeli przeglądarka lub curl (czy coś tam innego) pobiera właśnie w to miejsce, zalecamy zainstalowanie gry w innym folderze niż ten. Jest też możliwość, że poprostu pobrano grę i przed otwarciem przemieszczono ją do innego folderu, mniejsza z tym.\n\nJeżeli chcesz zainstalować grę w tym katalogu ("+os.getcwd()+"), poprostu kliknij OK, w przeciwnym razie (czyli jeżeli chcesz instalować gdzieś indziej) kliknij cancel (lub X u góry okna) i wpisz potem w osobnym okienku katalog instalacji.")
+    if w == None:
+        w = easygui.enterbox("Tutaj wprowadź katalog instalacji, jeżeli nie wiesz o co chodzi (lub po prostu się nie znasz), kliknij OK. Jeżeli nie chcesz jednak instalować gry, kliknij cancel.","Początek Nowożytności - instalacja",os.path.expanduser("~")+skos+"tbomt")
+        if w == None:
+            easygui.msgbox("Bye!")
+            exit()
+        else:
+            print("Wait...")
+            os.makedirs(w, exist_ok=True)
+            createfile(w+skos+"opened_data.data","0")
+            createfile(w+skos+"program.py",request_link="https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/program.py")
+            createfile(w+skos+"uninstall.py","import os\nos.remove(\""+__file__+"\")")
+            createfile(w+skos+"updater.py",request_link="https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py")
+            print(sys.executable)
+            subprocess.Popen([sys.executable, w+skos+"program.py"],cwd=w)
+            exit()
 elif not "opened_data.data" in os.listdir():
     w = easygui.enterbox("Nie znaleźliśmy żadnego pliku z zapisanymi danymi dotyczącymi poprzedniego otwarcia aplikacji, ale wygląda na to, że w tym folderze już są pliki. Zaleca się, aby gra znajdowała się w jednym folderze, ponieważ tworzy własne pliki, co może w przyszłości powodować problemy z czytelnością. Chcesz wybrać folder, w którym ta gra będzie zlokalizowana, czy wybrać domyślny folder dla tej gry? Jeżeli chcesz, wpisz nazwę tego folderu i kliknij \"OK\". W przeciwnym razie kliknij przycisk cancel, będziemy wiedzieli wtedy, że nie chcesz instalować.","Początek Nowożytności - instalacja",os.path.expanduser("~")+skos+"tbomt")
     if w == None:
@@ -361,7 +403,7 @@ while game != "quit":
             try:
                 compiler.do()
             except Exception as e:
-                easygui.codebox("Niestety compiler wysypał się nieoczekiwanie. Poniżej można znaleźć szczegóły błędu oraz zgłosić je na adres email the_beginning_of_modern_times@galaxyhit.com."," ",e)
+                easygui.codebox("Niestety compiler wysypał się nieoczekiwanie. Poniżej można znaleźć szczegóły błędu oraz zgłosić je na adres email the_beginning_of_modern_times@galaxyhit.com."," ",str(e))
             pygame_inicjalizacja()
             game = "addons_exitter"
     elif game == "addons_exitter":
