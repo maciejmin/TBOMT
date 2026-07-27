@@ -1,5 +1,6 @@
-#v1.0|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py
+#v1.0.1|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py
 #jezeli jakis dodatek na sources.list nie ma dwóch | nalezy go pominac
+import requests
 def update_program():
     print("Uruchamiam uaktualniacz, sprawdzam aktualizacje za pomocą funkcji requests oraz repozytorium Github TBOMT, czekaj...")
     try:
@@ -15,7 +16,6 @@ def update_program():
             current_version += readed_file[i]
         else:
             break
-    import requests
     web_file = requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/program.py").text
     web_file_version = ""
     for i in range(len(web_file)): #webfile
@@ -36,7 +36,6 @@ def update_program():
         return "updated"
 
 def update_extensions():
-    import requests
     print("searching from sources.list")
     try:
         file = open("sources.list","r",encoding="utf-8")
