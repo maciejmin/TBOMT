@@ -1,4 +1,4 @@
-#v1.1.2|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py
+#v1.1.3|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py
 #jezeli jakis dodatek na sources.list nie ma dwóch | nalezy go pominac
 import requests
 import sources_adder
@@ -48,7 +48,7 @@ def update_extensions():
     everyone = [] #wszystkie ze zwrotem informacji
     for i in sources: #plik caly zrodel
         current = "" #jeden z listy
-        lista = [] #lista linijki, [0] = źródło, [1] = lokalizacja/nazwa
+        lista = [] #lista linijki, [1] = źródło, [2] = lokalizacja/nazwa
         for j in i: #linijka, bo sources oddzielane są |. np. "source.com/source.py|home/liveuser/tbomt/extensions/source.py"
             if j != "|":
                 current += j
@@ -56,9 +56,9 @@ def update_extensions():
                 lista.append(current)
                 current = ""
         print(len(lista))
-        if len(lista) == 2:
+        if len(lista) == 2: #to znaczy że są dwie pozycje (ale ogolnie trzy dlatego potem sie dodaja)
             print(i)
-            lista.append(current)
+            lista.append(current) #tu sie dodaje ostatnia czyli lokalizacja
             zrodlo = requests.get(lista[1]).text
             wersja_zrodla = zrodlo.splitlines()[0]
             plik = open(lista[2],"r",encoding="utf-8").read().splitlines()[0]
@@ -66,16 +66,16 @@ def update_extensions():
                 everyone.append(str(i)+": Up to date.")
             else:
                 try:
-                    file = open(i,"w+",encoding="utf-8")
+                    file = open(lista[2],"w+",encoding="utf-8")
                     file.write(zrodlo)
                     file.close()
                     everyone.append(str(i)+": "+plik+" → "+wersja_zrodla+".")
-                except:
+                except Exception as e:
                     if "updater.py" in i:
                         sources_adder.update_updater()
                         everyone.append(str(i)+": Updated!")
                     else:
-                        everyone.append(str(i)+": Failure.")
+                        everyone.append(str(i)+": Failure. check: "+str(e))
     return everyone
 
 def add_requirements():
