@@ -1,4 +1,4 @@
-#v1.1|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/sources_adder.py
+#v1.1.1|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/sources_adder.py
 #program służy do pobrania extensions z katalogu extensions i ich wrzut do pliku sources.list oraz z tego folderu
 import os
 import requests
