@@ -1,4 +1,4 @@
-#v1.1|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py
+#v1.1.1|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py
 #jezeli jakis dodatek na sources.list nie ma dwóch | nalezy go pominac
 import requests
 import sources_adder
@@ -34,6 +34,9 @@ def update_program():
         file.write(web_file)
         file.close()
         print("Powodzenie.")
+        file = open("requirements_tbomt.list","w+",encoding="utf-8")
+        file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/requirements_tbomt.list").text)
+        file.close()
         return "updated"
 
 def update_extensions():
