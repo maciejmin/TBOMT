@@ -10,13 +10,13 @@ def refresh():
     files = os.listdir(".")
     sources = open("sources.list","w+",encoding="utf-8")
     for i in files:
-        if i[-3:] == ".py": #ten plik pobieramy
+        if i[-3:] == ".py" and "__init__.py" != i: #ten plik pobieramy
             file = open(i,"r",encoding="utf-8")
             sources.write(file.read().splitlines()[0][1:]+"|"+i+"\n")
             file.close()
     files = os.listdir(os.getcwd()+slash+"extensions")
     for i in files:
-        if i[-3:] == ".py": #ten plik pobieramy
+        if i[-3:] == ".py" and i != "__init__.py": #ten plik pobieramy
             file = open(i,"r",encoding="utf-8")
             sources.write(file.read().splitlines()[0][1:]+"|"+i+"\n")
             file.close()
