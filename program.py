@@ -1,4 +1,4 @@
-#vTest_0.0.8
+#vTest_0.0.9
 print("[0.0] Uruchamiam Początek Nowożytności, inicjuję czas")
 import time
 czas_od_startu = time.time()
@@ -81,9 +81,19 @@ def check_requirements():
             file = open("requirements_tbomt.list","r")
             file_content = file.read().splitlines()
             for i in file_content:
-                for j in i: #sprawdzamy każdy znak w danej linii
-                    os.path.exists()
-        except:
+                for j in range(len(i)): #sprawdzamy każdy znak w danej linii
+                    if i[j] == "|":
+                        if os.path.exists(i[:j]):
+                            print(i[:j],"OK.")
+                        else:
+                            print(i[:j],"ERROR.")
+                            print("fixing now...")
+                            file = open(i[:j],"w+",encoding="utf-8")
+                            file.write(requests.get(i[j+1:]).text)
+                            file.close()
+
+        except Exception as e:
+            print(e)
             easygui.textbox("Nie można sprawdzić plików. Wygląda na to, że updater nie wygenerował checklisty. Spójrz na logikę poniżej:"," ","Tylko wersja 1.2 (lub wyższa) updatera generuje check listy. Jeżeli jest niższa niż 1.1, nie może się zaaktualizować do wyższej wersji przez brak możliwości ładowania sources_addera. Oznacza to również, że żaden dodatek nie może się zaaktualizować, ponieważ sources_adder w ogóle się nie uruchamia. Zalecane jest teraz zaaktualizowanie przez program sources_addera (a nie przez updatera), a następnie uruchomienie go. Spowoduje to, że updater zostanie zaaktualizowany, a checklista dodatków zostanie uzupełnionia.\n\n\nProgram zrobi to za ciebie.")
             file = open("sources_adder.py","w+")
             file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/sources_adder.py").text)
@@ -93,7 +103,7 @@ def check_requirements():
             updater.add_requirements()
             check_requirements()
 check_requirements()
-
+import compiler
 cosp("Składam funkcje...")
 def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_open="w+"): #jeżeli chcemy request_link wpisujemy None w what_to_write, przeciwnie robimy odwrotnie, jeśli nie chcemy nic to w obu miejscach None
     file = open(localization_or_name,how_to_open,encoding="utf-8")
