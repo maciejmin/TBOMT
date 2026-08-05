@@ -1,4 +1,4 @@
-#vTest_0.0.7
+#vTest_0.0.8
 print("[0.0] Uruchamiam Początek Nowożytności, inicjuję czas")
 import time
 czas_od_startu = time.time()
@@ -55,14 +55,45 @@ if os.path.dirname(__file__) != os.getcwd():
     else:
         os.chdir(os.path.dirname(__file__))
 cosp("Sprawdzam zależności...")
-if os.path.exists("opened_data.data"): #to znaczy że już zainstalowano
-    try:
-        file = open("requirements_tbomt.list","r")
-    except:
-        easygui.textbox("Nie można sprawdzić plików. Wygląda na to, że updater nie wygenerował checklisty. Spójrz na logikę poniżej:"," ","Tylko wersja 1.2 (lub wyższa) updatera generuje check listy. Jeżeli jest niższa niż 1.1, nie może się zaaktualizować do wyższej wersji przez brak możliwości ładowania sources_addera. Oznacza to również, że żaden dodatek nie może się zaaktualizować, ponieważ sources_adder w ogóle się nie uruchamia. Zalecane jest teraz zaaktualizowanie przez program sources_addera (a nie przez updatera), a następnie uruchomienie go. Spowoduje to, że updater zostanie zaaktualizowany, a checklista dodatków zostanie uzupełnionia.\n\n\nProgram zrobi to za ciebie.")
-        file = open("sources_adder.py","w+")
-        file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/sources_adder.py").text)
+try:
+    import updater
+except:
+    w = easygui.buttonbox("Musimy użyć internetu, aby pobrać potrzebny plik."," ",["OK","Anuluj"])
+    if w == "OK":
+        file = open("updater.py","w+",encoding="utf-8")
+        file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py").text)
         file.close()
+        import updater
+    elif w == "Anuluj":
+        w = easygui.buttonbox("Gra nie może działać bez aktualizatora. Musimy użyć sieci, w przeciwnym razie będzie konieczność zamknięcia gry ze względu na możliwość wysypania się gry."," ",["Wyłącz TBOMT","Aktualizuj"])
+        if w == "OK":
+            file = open("updater.py","w+",encoding="utf-8")
+            file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py").text)
+            file.close()
+            import updater
+        else:
+            exit()
+    else:
+        exit()
+def check_requirements():
+    if os.path.exists("opened_data.data"): #to znaczy że już zainstalowano
+        try:
+            file = open("requirements_tbomt.list","r")
+            file_content = file.read().splitlines()
+            for i in file_content:
+                for j in i: #sprawdzamy każdy znak w danej linii
+                    os.path.exists()
+        except:
+            easygui.textbox("Nie można sprawdzić plików. Wygląda na to, że updater nie wygenerował checklisty. Spójrz na logikę poniżej:"," ","Tylko wersja 1.2 (lub wyższa) updatera generuje check listy. Jeżeli jest niższa niż 1.1, nie może się zaaktualizować do wyższej wersji przez brak możliwości ładowania sources_addera. Oznacza to również, że żaden dodatek nie może się zaaktualizować, ponieważ sources_adder w ogóle się nie uruchamia. Zalecane jest teraz zaaktualizowanie przez program sources_addera (a nie przez updatera), a następnie uruchomienie go. Spowoduje to, że updater zostanie zaaktualizowany, a checklista dodatków zostanie uzupełnionia.\n\n\nProgram zrobi to za ciebie.")
+            file = open("sources_adder.py","w+")
+            file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/sources_adder.py").text)
+            file.close()
+            import sources_adder
+            sources_adder.update_updater()
+            updater.add_requirements()
+            check_requirements()
+check_requirements()
+
 cosp("Składam funkcje...")
 def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_open="w+"): #jeżeli chcemy request_link wpisujemy None w what_to_write, przeciwnie robimy odwrotnie, jeśli nie chcemy nic to w obu miejscach None
     file = open(localization_or_name,how_to_open,encoding="utf-8")
@@ -78,7 +109,6 @@ easygui.msgbox("Za chwilę zadamy kilka pytań przed startem, prosimy o chwilę 
 easygui.msgbox("Uwaga! Gra najlepiej działa na Linuxie i nie jest zalecana dla osób z epilepsją fotogenną oraz w wieku poniżej 13 lat ponieważ zawiera szybkie animacje powodujące nienadążający wzrok za efektami u młodszych osób.")
 easygui.msgbox("Jeżeli znajdziesz jakikolwiek błąd zgłoś nam to na maila the_beginning_of_modern_times@galaxyhit.com a my spróbujemy to naprawić!")
 def updating():
-    import updater
     respond = updater.update_program()
     if respond == "actual":
         easygui.msgbox("Wersja programu jest aktualna. Nie trzeba nic aktualizować.")
