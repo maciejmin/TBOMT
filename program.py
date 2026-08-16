@@ -1,4 +1,4 @@
-#vTest_0.0.9
+#vTest_0.1.0
 print("[0.0] Uruchamiam Początek Nowożytności, inicjuję czas")
 import time
 czas_od_startu = time.time()
@@ -103,6 +103,7 @@ def check_requirements():
             updater.add_requirements()
             check_requirements()
 check_requirements()
+import sources_adder
 import compiler
 cosp("Składam funkcje...")
 def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_open="w+"): #jeżeli chcemy request_link wpisujemy None w what_to_write, przeciwnie robimy odwrotnie, jeśli nie chcemy nic to w obu miejscach None
@@ -128,7 +129,9 @@ def updating():
         exit()
     w = easygui.buttonbox("Uwaga, jest też możliwość, że dodatki do gry wymagają aktualizacji, takie jak np. ruch gracza itp. Czy chcesz poszukać aktualizacji dodatków?"," ",["Tak","Nie"])
     if w == "Tak":
-        easygui.buttonbox("Uwaga, czy chcesz zaaktualizować listę dodatków? jeżeli nie chcesz, może być tak, że nie wszystkie dodatki będą wzięte pod uwagę podczas aktualizacji."," ",["Zaaktualizuj","Pozostań przy ostatniej aktualizacji pakietów"],default_choice="Zaaktualizuj")
+        w = easygui.indexbox("Uwaga, czy chcesz zaaktualizować listę dodatków? jeżeli nie chcesz, może być tak, że nie wszystkie dodatki będą wzięte pod uwagę podczas aktualizacji."," ",["Zaaktualizuj","Pozostań przy ostatniej aktualizacji pakietów"],default_choice="Zaaktualizuj")
+        if w == 0:
+            sources_adder.refresh()
         respond = updater.update_extensions()
         if len(respond) == 2:
             if respond[1][:9] == "[Errno 2]":
@@ -353,7 +356,7 @@ def buttonbox(question:str,buttons:list,text_size:int,buttons_size:int): #maine
             clicked = False
             return i
 
-game = "menu"
+game = "info"
 rozmiar = ["Bardzo malutki (1 biom)","Malutki (2 biomy)","Mały (3 biomy)","Zwykły (5 biomów)","Duży (6 biomów) Zalecany","Bardzo duży (8 biomów)","Wielki (10 biomów)","Ogromny (15 biomów)","Gigantyczny (20 biomów)"]
 clicked = False
 while game != "quit":
@@ -453,6 +456,15 @@ while game != "quit":
             game = "quit"
         if w == 1:
             game = "settings"
+    elif game == "info":
+        draw_text(okno, "center", "Uruchamiasz na linuxie lub MacOS. Jeżeli masz Plazmę od KDE, poprostu wklikaj alt+f3", (round(x / 2), round(y / 2 - y / 12)), size=round((x + y) / 100), font_name="Monospace")
+        draw_text(okno, "center", "(lub alt+fn+f3 jeżeli masz głośność pod f3), następnie Więcej działań a potem zaznacz Na całym ekranie", (round(x / 2), round(y / 2 - y / 20)), size=round((x + y) / 100), font_name="Monospace")
+        if draw_text(okno, "center", "OK!", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
+            if draw_text(okno, "center", "Poprostu zamknij ten komunikat, jego pokazywanie kiedyś będzie można zmienić w ustawieniach.", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                clicked = "close_info" #wtedy wiadomo że trzeba poczekać na niego aż oznaczy na False
+            elif clicked == "close_info":
+                clicked = False
+                game = "menu"
     else: #gdy nie wiadomo
         draw_text(okno, "center", "404! Nie znaleźliśmy opcji "+game+".", (round(x / 2), round(y / 2 - y / 20)), size=round((x + y) / 100), font_name="Monospace")
         if draw_text(okno, "center", "Wróć do menu głównego", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
