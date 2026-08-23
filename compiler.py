@@ -1,8 +1,8 @@
-#vtest
+#v0.0.1
 #program czyta extensions.todo i wsadza pliki do programu
 print("Compiler initialized!")
+import easygui
 def do():
-    import easygui
     def compiler():
         w = easygui.indexbox("Witaj w kompilerze dodatków TBOMT, wybierz co teraz chcesz zrobić."," ",["Zaaktualizuj listę dodatków (Jeżeli ostatnio pobierano)","Przejrzyj listę i wgraj do gry"])
         if w == 0:
@@ -30,10 +30,20 @@ def do():
                     w = easygui.indexbox("Wygląda na to, że nie chcesz edytować żadnego dodatku. Co teraz?"," ",["Wróć do TBOMT","Rozpocznij na nowo edycję dodatków"])
                     if w == 1:
                         compiler()
-                else:        
+                else:
+                    print(w,dodatki)
                     w = w.splitlines()
-                    if len(w) == len(dodatki.splitlines()): #gracz nie edytował zbyt dużo
-                        for i in range(len(w)):
-                            if w != w:
-                                pass
+                    for i in range(len(w)):
+                        if w[i] != dodatki.splitlines()[i]: #ta linia edytowana
+                            #sprawdzamy edytowaną linię
+                            name_addon = dodatki.splitlines()[i]
+                            addon_changer(name_addon)
+                        
     compiler()
+
+def addon_changer(name_addon): #zmienia ustawienia dodatku aby nie mieszać w głównym kodzie kompilera, podaj tu name_addon
+    for i in range(len(name_addon)):
+        if name_addon[i] == ".":
+            nazwa = name_addon[:i]
+        if name_addon[i+1:] == "addon":
+            easygui.codebox(nazwa+" to jest dodatek władowany przez użytkownika, lub pakiet zalecany. Możesz zmienić poniżej jego ustawienia."," ","enabled = True")
