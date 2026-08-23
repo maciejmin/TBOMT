@@ -1,8 +1,18 @@
-#v0.0.1
+#v0.0.2|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/compiler.py
 #program czyta extensions.todo i wsadza pliki do programu
 print("Compiler initialized!")
 import easygui
+import os
+import requests
 def do():
+    if not os.path.exists("addons_settings.info"):
+        try:
+            import addons_settings_adder
+        except:
+            file = open("addons_settings_adder","w+",encoding="utf-8")
+            file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/addons_settings_adder.py").text)
+            import addons_settings_adder
+        addons_settings_adder.refresh()
     def compiler():
         w = easygui.indexbox("Witaj w kompilerze dodatków TBOMT, wybierz co teraz chcesz zrobić."," ",["Zaaktualizuj listę dodatków (Jeżeli ostatnio pobierano)","Przejrzyj listę i wgraj do gry"])
         if w == 0:
