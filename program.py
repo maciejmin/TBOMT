@@ -1,4 +1,4 @@
-#vTest_0.1.0
+#vTest_0.1.1
 print("[0.0] Uruchamiam Początek Nowożytności, inicjuję czas")
 import time
 czas_od_startu = time.time()
@@ -55,26 +55,27 @@ if os.path.dirname(__file__) != os.getcwd():
     else:
         os.chdir(os.path.dirname(__file__))
 cosp("Sprawdzam zależności...")
-try:
-    import updater
-except:
-    w = easygui.buttonbox("Musimy użyć internetu, aby pobrać potrzebny plik."," ",["OK","Anuluj"])
-    if w == "OK":
-        file = open("updater.py","w+",encoding="utf-8")
-        file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py").text)
-        file.close()
+if "opened_data.data" in os.listdir():
+    try:
         import updater
-    elif w == "Anuluj":
-        w = easygui.buttonbox("Gra nie może działać bez aktualizatora. Musimy użyć sieci, w przeciwnym razie będzie konieczność zamknięcia gry ze względu na możliwość wysypania się gry."," ",["Wyłącz TBOMT","Aktualizuj"])
+    except:
+        w = easygui.buttonbox("Musimy użyć internetu, aby pobrać potrzebny plik."," ",["OK","Anuluj"])
         if w == "OK":
             file = open("updater.py","w+",encoding="utf-8")
             file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py").text)
             file.close()
             import updater
+        elif w == "Anuluj":
+            w = easygui.buttonbox("Gra nie może działać bez aktualizatora. Musimy użyć sieci, w przeciwnym razie będzie konieczność zamknięcia gry ze względu na możliwość wysypania się gry."," ",["Wyłącz TBOMT","Aktualizuj"])
+            if w == "OK":
+                file = open("updater.py","w+",encoding="utf-8")
+                file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py").text)
+                file.close()
+                import updater
+            else:
+                exit()
         else:
             exit()
-    else:
-        exit()
 def check_requirements():
     if os.path.exists("opened_data.data"): #to znaczy że już zainstalowano
         try:
@@ -116,20 +117,37 @@ def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_
         file.write(r.text)
     file.close()
 print("Koniec, inicjacja gry zajęła "+str(time.time()-czas_od_startu)+" sekund.")
-easygui.msgbox("Za chwilę zadamy kilka pytań przed startem, prosimy o chwilę cierpliwości. Gra została napisana trochę amatorsko, dlatego twórca wymaga textowego okienka zaraz obok. Ale to poprostu wyświetla informację o stanie gry.")
-easygui.msgbox("Uwaga! Gra najlepiej działa na Linuxie i nie jest zalecana dla osób z epilepsją fotogenną oraz w wieku poniżej 13 lat ponieważ zawiera szybkie animacje powodujące nienadążający wzrok za efektami u młodszych osób.")
-easygui.msgbox("Jeżeli znajdziesz jakikolwiek błąd zgłoś nam to na maila the_beginning_of_modern_times@galaxyhit.com a my spróbujemy to naprawić!")
+w = easygui.indexbox("Za chwilę zadamy kilka pytań przed startem, prosimy o chwilę cierpliwości. Gra została napisana trochę amatorsko, dlatego twórca wymaga textowego okienka zaraz obok. Ale to poprostu wyświetla informację o stanie gry."," ",["Pomiń, i użyj domyślnych rzeczy (to może być płatne, gdy korzystasz z sieci taryfowej)","OK","Nie mogę przejść do następnego kroku"])
+if w == 0:
+    game = "skip"
+elif w == 1:
+    game = "info"
+elif w == 2:
+    easygui.msgbox("Napisz nam na maila, co poszło nie tak i spróbujemy się dogadać! the_beginning_of_modern_times@galaxyhit.com.")
+    exit()
+else:
+    exit()
+if game != "skip":
+    easygui.msgbox("Uwaga! Gra najlepiej działa na Linuxie i nie jest zalecana dla osób z epilepsją fotogenną oraz w wieku poniżej 13 lat ponieważ zawiera szybkie animacje powodujące nienadążający wzrok za efektami u młodszych osób.")
+    easygui.msgbox("Jeżeli znajdziesz jakikolwiek błąd zgłoś nam to na maila the_beginning_of_modern_times@galaxyhit.com a my spróbujemy to naprawić!")
 def updating():
+    global game
     respond = updater.update_program()
-    if respond == "actual":
+    if respond == "actual" and game != "skip":
         easygui.msgbox("Wersja programu jest aktualna. Nie trzeba nic aktualizować.")
     elif respond == "updated":
         easygui.msgbox("Program został zaaktualizowany na nowszą wersję! Uruchomimy go ponownie aby zapewnić mu lepszą sprawność.")
         subprocess.Popen([sys.executable,__file__])
         exit()
-    w = easygui.buttonbox("Uwaga, jest też możliwość, że dodatki do gry wymagają aktualizacji, takie jak np. ruch gracza itp. Czy chcesz poszukać aktualizacji dodatków?"," ",["Tak","Nie"])
+    if game != "skip":
+        w = easygui.buttonbox("Uwaga, jest też możliwość, że dodatki do gry wymagają aktualizacji, takie jak np. ruch gracza itp. Czy chcesz poszukać aktualizacji dodatków?"," ",["Tak","Nie"])
+    else:
+        w = "Tak"
     if w == "Tak":
-        w = easygui.indexbox("Uwaga, czy chcesz zaaktualizować listę dodatków? jeżeli nie chcesz, może być tak, że nie wszystkie dodatki będą wzięte pod uwagę podczas aktualizacji."," ",["Zaaktualizuj","Pozostań przy ostatniej aktualizacji pakietów"],default_choice="Zaaktualizuj")
+        if game != "skip":
+            w = easygui.indexbox("Uwaga, czy chcesz zaaktualizować listę dodatków? jeżeli nie chcesz, może być tak, że nie wszystkie dodatki będą wzięte pod uwagę podczas aktualizacji."," ",["Zaaktualizuj","Pozostań przy ostatniej aktualizacji pakietów"],default_choice="Zaaktualizuj")
+        else:
+            w = 0
         if w == 0:
             sources_adder.refresh()
         respond = updater.update_extensions()
@@ -158,10 +176,11 @@ def updating():
             for i in respond: #aby zrobic kilka linii, jak wysyla sie listę to jest nieschludnie
                 result += i
                 result += "\n"
-            easygui.codebox("Uwaga, wygląda na to, że aktualizacja dodatków się udała! Jeżeli chcesz, możesz przeczytać log."," ",result)
-            easygui.msgbox("Aby użyć nowych wersji dodatków, uruchomimy grę ponownie.")
-            subprocess.Popen([sys.executable,__file__])
-            exit()
+            if "→" in result:
+                easygui.codebox("Uwaga, wygląda na to, że aktualizacja dodatków się udała! Jeżeli chcesz, możesz przeczytać log."," ",result)
+                easygui.msgbox("Aby użyć nowych wersji dodatków, uruchomimy grę ponownie.")
+                subprocess.Popen([sys.executable,__file__])
+                exit()
 print(os.listdir())
 if len(os.listdir()) == 1:
     print("It's ok, we're only installing important thinks, you can find it below. Do not close this frame please.")
@@ -216,7 +235,10 @@ except:
             print("Package can't be installed. We must to kill the process.")
             exit()
 #szukanie pliku uninstall.py
-w = easygui.buttonbox("Czy chcesz sprawdzić aktualizacje gry? Jeżeli będzie taka możliwość zaaktualizujemy automatycznie program. To wymaga połączenia internetowego co może powodować opłaty."," ",["Tak","Nie"])
+if game != "skip":
+    w = easygui.buttonbox("Czy chcesz sprawdzić aktualizacje gry? Jeżeli będzie taka możliwość zaaktualizujemy automatycznie program. To wymaga połączenia internetowego co może powodować opłaty."," ",["Tak","Nie"])
+else:
+    w = "Tak"
 if w == "Tak":
     updating()
 if os.path.exists("uninstall.py"):
@@ -355,8 +377,28 @@ def buttonbox(question:str,buttons:list,text_size:int,buttons_size:int): #maine
         if clicked == str(i):
             clicked = False
             return i
+class dane:
+    class otwarcia:
+        def add(dana,co): #dana oznacza nazwe czyli np. show_KDE=true, co mowi co ma byc wpisane np. true
+            try:
+                #file = open("opened_data.data","r+",encoding="utf-8")
+                if dane.otwarcia.check(dana,1): #sposob 1 czyli podaje true albo false, sposob 0 czyli podaje co
+                    #oznacza że jest
+                    dane.otwarcia.listshow()
+            except:
+                easygui.msgbox("Proszę zainstalować grę. Nie ładne zachowanie w edytowaniu kodu w taki sposób.")
+                exit()
+        def listshow():
+            file = open("opened_data.data","r",encoding="utf-8")
+            zawartosc = file.read().splitlines()
+            for i in range(len(zawartosc)):
+                all_line = ""
+                for j in range(len(i)):
+                    if i[j] != "=":
+                        all_line += i[j]
+                    else:
+                        pass #tutaj bedzie ze zakonczenie itd. potem do listy i piknie
 
-game = "info"
 rozmiar = ["Bardzo malutki (1 biom)","Malutki (2 biomy)","Mały (3 biomy)","Zwykły (5 biomów)","Duży (6 biomów) Zalecany","Bardzo duży (8 biomów)","Wielki (10 biomów)","Ogromny (15 biomów)","Gigantyczny (20 biomów)"]
 clicked = False
 while game != "quit":
@@ -404,6 +446,12 @@ while game != "quit":
             elif clicked == "quit_menu":
                 clicked = False
                 game = "quit"
+        if draw_text(okno, "left", "i",pos=[20,20], size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
+            if draw_text(okno, "left", "info",pos=[20,20], size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                clicked = "info_menu" #wtedy wiadomo że trzeba poczekać na niego aż oznaczy na False
+            elif clicked == "info_menu":
+                clicked = False
+                game = "info"
     elif game == "create":
         try:
             file = open("datas.data","r+") #był wcześniej utworzony świat
@@ -460,11 +508,19 @@ while game != "quit":
         draw_text(okno, "center", "Uruchamiasz na linuxie lub MacOS. Jeżeli masz Plazmę od KDE, poprostu wklikaj alt+f3", (round(x / 2), round(y / 2 - y / 12)), size=round((x + y) / 100), font_name="Monospace")
         draw_text(okno, "center", "(lub alt+fn+f3 jeżeli masz głośność pod f3), następnie Więcej działań a potem zaznacz Na całym ekranie", (round(x / 2), round(y / 2 - y / 20)), size=round((x + y) / 100), font_name="Monospace")
         if draw_text(okno, "center", "OK!", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
-            if draw_text(okno, "center", "Poprostu zamknij ten komunikat, jego pokazywanie kiedyś będzie można zmienić w ustawieniach.", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+            if draw_text(okno, "center", "Poprostu zamknij ten komunikat tylko teraz", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
                 clicked = "close_info" #wtedy wiadomo że trzeba poczekać na niego aż oznaczy na False
             elif clicked == "close_info":
                 clicked = False
                 game = "menu"
+        if draw_text(okno, "center", "OK! I nie pokazuj ponownie", (round(x / 2), round(y / 2 + y / 25)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
+            if draw_text(okno, "center", "Nie zobaczysz więcej tego komunikatu.", (round(x / 2), round(y / 2 + y / 25)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                clicked = "close2_info" #wtedy wiadomo że trzeba poczekać na niego aż oznaczy na False
+            elif clicked == "close2_info":
+                clicked = False
+                game = "menu"
+    elif game == "skip":
+        game = "menu"
     else: #gdy nie wiadomo
         draw_text(okno, "center", "404! Nie znaleźliśmy opcji "+game+".", (round(x / 2), round(y / 2 - y / 20)), size=round((x + y) / 100), font_name="Monospace")
         if draw_text(okno, "center", "Wróć do menu głównego", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
