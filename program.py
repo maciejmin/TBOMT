@@ -1,4 +1,4 @@
-#vTest_0.1.1
+#vTest_0.1.2
 print("[0.0] Uruchamiam Początek Nowożytności, inicjuję czas")
 import time
 czas_od_startu = time.time()
@@ -117,7 +117,7 @@ def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_
         file.write(r.text)
     file.close()
 print("Koniec, inicjacja gry zajęła "+str(time.time()-czas_od_startu)+" sekund.")
-w = easygui.indexbox("Za chwilę zadamy kilka pytań przed startem, prosimy o chwilę cierpliwości. Gra została napisana trochę amatorsko, dlatego twórca wymaga textowego okienka zaraz obok. Ale to poprostu wyświetla informację o stanie gry."," ",["Pomiń, i użyj domyślnych rzeczy (to może być płatne, gdy korzystasz z sieci taryfowej)","OK","Nie mogę przejść do następnego kroku"])
+w = easygui.indexbox("Za chwilę zadamy kilka pytań przed startem, prosimy o chwilę cierpliwości. Gra została napisana trochę amatorsko, dlatego twórca wymaga textowego okienka zaraz obok. Ale to poprostu wyświetla informację o stanie gry."," ",["Pomiń, i użyj domyślnych rzeczy (to może być płatne, gdy korzystasz z sieci taryfowej)","OK","Nie mogę przejść do menu głównego"])
 if w == 0:
     game = "skip"
 elif w == 1:
@@ -377,27 +377,80 @@ def buttonbox(question:str,buttons:list,text_size:int,buttons_size:int): #maine
         if clicked == str(i):
             clicked = False
             return i
-class dane:
+class dane: #maine
     class otwarcia:
         def add(dana,co): #dana oznacza nazwe czyli np. show_KDE=true, co mowi co ma byc wpisane np. true
-            try:
-                #file = open("opened_data.data","r+",encoding="utf-8")
-                if dane.otwarcia.check(dana,1): #sposob 1 czyli podaje true albo false, sposob 0 czyli podaje co
+            #try:
+                if dane.otwarcia.check(dana,1): #sposob 1 czyli podaje true albo false, sposob 0 czyli podaje co, sposob 2 podaje index wpisania
                     #oznacza że jest
-                    dane.otwarcia.listshow()
-            except:
-                easygui.msgbox("Proszę zainstalować grę. Nie ładne zachowanie w edytowaniu kodu w taki sposób.")
-                exit()
+                    lista_data = dane.otwarcia.listshow() #sprawdzimy całą listę, żeby potem skompilować
+                    lista_data[1][dane.otwarcia.check(dana,2)] = co
+                    print("set: "+lista_data[0][dane.otwarcia.check(dana,2)]+"="+lista_data[1][dane.otwarcia.check(dana,2)]+". OK!")
+                    dane.otwarcia.configure(lista_data)
+                    print("updated settings.")
+                else: #oznacza ze nie ma
+                    lista_data = dane.otwarcia.listshow()
+                    lista_data[0].append(dana)
+                    lista_data[1].append(co)
+                    dane.otwarcia.configure(lista_data)
+            #except Exception as e:
+                if False:
+                    pygame.quit()
+                    easygui.msgbox("Proszę zainstalować grę. Nie ładne zachowanie w edytowaniu kodu w taki sposób.")
+                    exit()
         def listshow():
             file = open("opened_data.data","r",encoding="utf-8")
             zawartosc = file.read().splitlines()
+            lista_names = []
+            lista_data = []
             for i in range(len(zawartosc)):
                 all_line = ""
-                for j in range(len(i)):
-                    if i[j] != "=":
-                        all_line += i[j]
+                for j in range(len(zawartosc[i])):
+                    if zawartosc[i][j] != "=":
+                        all_line += zawartosc[i][j]
                     else:
-                        pass #tutaj bedzie ze zakonczenie itd. potem do listy i piknie
+                        lista_names.append(all_line)
+                        all_line = ""
+                        #tutaj bedzie ze zakonczenie itd. potem do listy i piknie
+                lista_data.append(all_line)
+            return [lista_names,lista_data] #zwraca pierwsza liste z nazwami a druga z danymi w tym samym indexie
+
+        def check(dana,co):
+            try:
+                dane_tego = dane.otwarcia.listshow()
+                for i in range(len(dane_tego[0])):
+                    if dane_tego[0][i] == dana:
+                        if co == 0:
+                            return dane_tego[1][i]
+                        elif co == 2:
+                            return i
+                        else:
+                            return True
+                return False
+            except:
+                if co == 0:
+                    return 0
+        def configure(lista): #dajesz liste w formacie [lista data, lista names] a to uzupelnia do pliku
+            if len(lista) != 2:
+                print("Podana lista ma nieprawidłowe dane.")
+            print("Nie przerywaj gry, zapisywanie danych personalizacji...")
+            file = open("opened_data.data","w+",encoding="utf-8")
+            for i in range(len(lista[0])):
+                file.write(lista[0][i]+"="+lista[1][i]+"\n")
+            file.close()
+        def remove(co):
+            lista_dane = dane.otwarcia.listshow()
+            try:
+                lista_dane[0].remove(co)
+                lista_dane[1].remove(lista_dane[1][dane.otwarcia.check(co,2)])
+                dane.otwarcia.configure(lista_dane)
+            except:
+                print("ignorowanie danych, brak na liście.")
+        def clear():
+            lista_dane = dane.otwarcia.listshow()
+            lista_dane[0].clear()
+            lista_dane[1].clear()
+            dane.otwarcia.configure(lista_dane)
 
 rozmiar = ["Bardzo malutki (1 biom)","Malutki (2 biomy)","Mały (3 biomy)","Zwykły (5 biomów)","Duży (6 biomów) Zalecany","Bardzo duży (8 biomów)","Wielki (10 biomów)","Ogromny (15 biomów)","Gigantyczny (20 biomów)"]
 clicked = False
@@ -505,6 +558,9 @@ while game != "quit":
         if w == 1:
             game = "settings"
     elif game == "info":
+        if dane.otwarcia.check("show_KDE",0) == "False":
+            print("Show kde? ",dane.otwarcia.check("show_KDE",0))
+            game = "menu"
         draw_text(okno, "center", "Uruchamiasz na linuxie lub MacOS. Jeżeli masz Plazmę od KDE, poprostu wklikaj alt+f3", (round(x / 2), round(y / 2 - y / 12)), size=round((x + y) / 100), font_name="Monospace")
         draw_text(okno, "center", "(lub alt+fn+f3 jeżeli masz głośność pod f3), następnie Więcej działań a potem zaznacz Na całym ekranie", (round(x / 2), round(y / 2 - y / 20)), size=round((x + y) / 100), font_name="Monospace")
         if draw_text(okno, "center", "OK!", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
@@ -518,6 +574,7 @@ while game != "quit":
                 clicked = "close2_info" #wtedy wiadomo że trzeba poczekać na niego aż oznaczy na False
             elif clicked == "close2_info":
                 clicked = False
+                dane.otwarcia.add("show_KDE","False")
                 game = "menu"
     elif game == "skip":
         game = "menu"
