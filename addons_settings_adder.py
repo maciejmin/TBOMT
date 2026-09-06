@@ -1,1 +1,1 @@
-#Tu bedzie tworzenie kazdego pliku dla kazdego dodatku, ale na to trzeba poczekac
+#vTest|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/addons_settings_adder.py
