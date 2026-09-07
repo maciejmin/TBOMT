@@ -1,6 +1,7 @@
-#v0.2.1|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/extensiondownloader.py
+#v0.2.2|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/extensiondownloader.py
 #program służy do pobrania extensions z katalogu extensions, następnie wgranie go do pliku extensions.todo, który zawiera każdą linię itd. w której która extension. Potem otwiera compiler.py który wysyła wszystko do program.py ale przed tem tqorzy kopię zapasową tego poprzedniego pliku.
 import os
+import addons_settings_adder
 if os.name == "nt":
     slash = "\\" #system microsoft
 else:
@@ -18,16 +19,9 @@ try:
             file.write(i+"|addon\n")
     file.close()
 except:
-    try:
-        import extensionsinstaller
-    except:
-        file = open("extensionsinstaller.py","w+",encoding="utf-8")
-        file.write("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/extensionsinstaller.py")
-        file.close()
-        import extensionsinstaller
-    extensionsinstaller.do()
+    print("Coś poszło nie tak.")
 try:
-    print("To jest przykład, możliwe że kiedyś będzie potrzebne to, co jest pod except")
+    print("Zamykam extensiondownloader, wracam...")
 except Exception as e:
     import easygui
     easygui.msgbox("Coś poszło nie tak. Plik:\n"+__file__+"\nBłąd:\n"+str(e)+"\nJeżeli błąd jest nietrudny do naprawienia, możesz to zrobić. W przeciwnym razie skontaktuj się z nami. Musimy przerwać program.")
