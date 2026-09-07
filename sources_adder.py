@@ -1,4 +1,4 @@
-#v1.1.3|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/sources_adder.py
+#v1.1.4|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/sources_adder.py
 #program służy do pobrania extensions z katalogu extensions i ich wrzut do pliku sources.list oraz z tego folderu
 import os
 import requests
@@ -6,7 +6,7 @@ try:
     import addons_settings_adder
 except:
     file = open("addons_settings_adder.py","w+",encoding="utf-8")
-    file.write("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/addons_settings_adder.py")
+    file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/addons_settings_adder.py").text)
     file.close()
     import addons_settings_adder
 def refresh():
