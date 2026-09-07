@@ -1,4 +1,4 @@
-#vTest_0.1.2
+#vTest_0.1.3
 print("[0.0] Uruchamiam Początek Nowożytności, inicjuję czas")
 import time
 czas_od_startu = time.time()
@@ -92,7 +92,6 @@ def check_requirements():
                             file = open(i[:j],"w+",encoding="utf-8")
                             file.write(requests.get(i[j+1:]).text)
                             file.close()
-
         except Exception as e:
             print(e)
             easygui.textbox("Nie można sprawdzić plików. Wygląda na to, że updater nie wygenerował checklisty. Spójrz na logikę poniżej:"," ","Tylko wersja 1.2 (lub wyższa) updatera generuje check listy. Jeżeli jest niższa niż 1.1, nie może się zaaktualizować do wyższej wersji przez brak możliwości ładowania sources_addera. Oznacza to również, że żaden dodatek nie może się zaaktualizować, ponieważ sources_adder w ogóle się nie uruchamia. Zalecane jest teraz zaaktualizowanie przez program sources_addera (a nie przez updatera), a następnie uruchomienie go. Spowoduje to, że updater zostanie zaaktualizowany, a checklista dodatków zostanie uzupełnionia.\n\n\nProgram zrobi to za ciebie.")
@@ -104,8 +103,9 @@ def check_requirements():
             updater.add_requirements()
             check_requirements()
 check_requirements()
-import sources_adder
-import compiler
+if os.path.exists("opened_data.data"): #instalowano, można importować
+    import sources_adder
+    import compiler
 cosp("Składam funkcje...")
 def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_open="w+"): #jeżeli chcemy request_link wpisujemy None w what_to_write, przeciwnie robimy odwrotnie, jeśli nie chcemy nic to w obu miejscach None
     file = open(localization_or_name,how_to_open,encoding="utf-8")
