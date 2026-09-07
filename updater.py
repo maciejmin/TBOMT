@@ -1,7 +1,8 @@
-#v1.1.5|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py
+#v1.1.6|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py
 #jezeli jakis dodatek na sources.list nie ma dwóch | nalezy go pominac
+import requests
 try:
-    import requests
+    import sources_adder
 except:
     file = open("sources_adder.py","w+",encoding="utf-8")
     file.write("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/sources_adder.py")
