@@ -1,8 +1,16 @@
-#v1.1.2|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/sources_adder.py
+#v1.1.3|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/sources_adder.py
 #program służy do pobrania extensions z katalogu extensions i ich wrzut do pliku sources.list oraz z tego folderu
 import os
 import requests
+try:
+    import addons_settings_adder
+except:
+    file = open("addons_settings_adder.py","w+",encoding="utf-8")
+    file.write("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/addons_settings_adder.py")
+    file.close()
+    import addons_settings_adder
 def refresh():
+    addons_settings_adder.check()
     if os.name == "nt":
         slash = "\\"
     else:
@@ -22,15 +30,7 @@ def refresh():
                 sources.write(file.read().splitlines()[0][1:]+"|"+i+"\n")
                 file.close()
     except:
-        print("Błąd, prawdopodobnie nie ma folderu z dodatkami. Zostanie on zrobiony!")
-        try:
-            import extensionsinstaller
-        except:
-            file = open("extensionsinstaller.py","w+",encoding="utf-8")
-            file.write("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/extensionsinstaller.py")
-            file.close()
-            import extensionsinstaller
-        extensionsinstaller.do()
+        print("Błąd, coś poszło nie tak.")
 def update_updater():
     file = open("updater.py","w+",encoding="utf-8")
     file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py").text)
