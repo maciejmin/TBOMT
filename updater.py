@@ -1,4 +1,4 @@
-#v1.1.4|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py
+#v1.1.5|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py
 #jezeli jakis dodatek na sources.list nie ma dwóch | nalezy go pominac
 try:
     import requests
@@ -6,8 +6,7 @@ except:
     file = open("sources_adder.py","w+",encoding="utf-8")
     file.write("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/sources_adder.py")
     file.close()
-    import requests
-import sources_adder
+    import sources_adder
 def update_program():
     print("Uruchamiam uaktualniacz, sprawdzam aktualizacje za pomocą funkcji requests oraz repozytorium Github TBOMT, czekaj...")
     try:
