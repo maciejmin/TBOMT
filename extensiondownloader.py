@@ -1,12 +1,19 @@
-#v0.2.2|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/extensiondownloader.py
+#v0.2.3|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/extensiondownloader.py
 #program służy do pobrania extensions z katalogu extensions, następnie wgranie go do pliku extensions.todo, który zawiera każdą linię itd. w której która extension. Potem otwiera compiler.py który wysyła wszystko do program.py ale przed tem tqorzy kopię zapasową tego poprzedniego pliku.
 import os
-import addons_settings_adder
+try:
+    import addons_settings_adder
+except:
+    file = open("addons_settings_adder.py","w+",encoding="utf-8")
+    file.write("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/addons_settings_adder.py")
+    file.close()
+    import addons_settings_adder
 if os.name == "nt":
     slash = "\\" #system microsoft
 else:
     slash = "/" #Linux, MacOs
 katalog_ex = os.getcwd() #oznacza katalog programu
+addons_settings_adder.check()
 try:
     file = open("extensions.todo","w+",encoding="utf-8")
     for i in os.listdir(katalog_ex+slash+"extensions"+slash+"basicextensions"): #czytamy najpierw podstawowe dodatki TBOMT
