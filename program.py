@@ -1,4 +1,4 @@
-#vTest_0.1.3
+#vTest_0.1.4
 print("[0.0] Uruchamiam Początek Nowożytności, inicjuję czas")
 import time
 czas_od_startu = time.time()
