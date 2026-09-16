@@ -95,7 +95,7 @@ def check_requirements():
         except Exception as e:
             print(e)
             easygui.textbox("Nie można sprawdzić plików. Wygląda na to, że updater nie wygenerował checklisty. Spójrz na logikę poniżej:"," ","Tylko wersja 1.2 (lub wyższa) updatera generuje check listy. Jeżeli jest niższa niż 1.1, nie może się zaaktualizować do wyższej wersji przez brak możliwości ładowania sources_addera. Oznacza to również, że żaden dodatek nie może się zaaktualizować, ponieważ sources_adder w ogóle się nie uruchamia. Zalecane jest teraz zaaktualizowanie przez program sources_addera (a nie przez updatera), a następnie uruchomienie go. Spowoduje to, że updater zostanie zaaktualizowany, a checklista dodatków zostanie uzupełnionia.\n\n\nProgram zrobi to za ciebie.")
-            file = open("sources_adder.py","w+")
+            file = open("sources_adder.py","w+",encoding="utf-8")
             file.write(requests.get("https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/sources_adder.py").text)
             file.close()
             import sources_adder
@@ -452,6 +452,26 @@ class dane: #maine
             lista_dane[1].clear()
             dane.otwarcia.configure(lista_dane)
 
+i_for_percents = [0,0] #0, pozycja, 0, idzie w gore, 1 idzie w dol
+def progressbar(percent,text,textsize):
+    global okno
+    global i_for_percents
+    draw_text(okno,"center"," "*10,[round(x/2),round(y/2)],int(round((x+y)) / 5),is_button=True)
+    draw_text(okno,"left",text,[round(x/7),round(y/4)],round((x + y) / 100))
+    draw_text(okno,"center"," "*100,[round(x/2),round(y/2)],int(round((x+y)) / 80),is_button=True,button_color=[255,255,255])
+    if percent != None:
+        draw_text(okno,"center"," "*int(percent),[round(x/2),round(y/2)],int(round((x+y)) / 80),is_button=True,button_color=[20,250,20])
+        draw_text(okno,"center",str(int(percent))+"%",[round(x/2),round(y/2)],int(round((x+y)) / 80))
+    else:
+        draw_text(okno,"center"," "*10,[(round(x/20)*-4)*(int(i_for_percents[0])/90)+round(x/2),round(y/2)],int(round((x+y)) / 80),is_button=True,button_color=[20,250,20])
+        if i_for_percents[1] == 0:
+            i_for_percents[0] = (i_for_percents[0]*9 + 100) / 10
+            if i_for_percents[0] > 95:
+                i_for_percents[1] = 1
+        else:
+            i_for_percents[0] = (i_for_percents[0]*9 + -100) / 10
+            if i_for_percents[0] < -95:
+                i_for_percents[1] = 0
 rozmiar = ["Bardzo malutki (1 biom)","Malutki (2 biomy)","Mały (3 biomy)","Zwykły (5 biomów)","Duży (6 biomów) Zalecany","Bardzo duży (8 biomów)","Wielki (10 biomów)","Ogromny (15 biomów)","Gigantyczny (20 biomów)"]
 clicked = False
 while game != "quit":
@@ -513,6 +533,7 @@ while game != "quit":
             if buttonbox("Tworzenie świata, dobierz odpowiednie tobie opcje:",["Wróć","Ok"],100,100) == 0:
                 game = "menu"
             elif buttonbox("Tworzenie świata, dobierz odpowiednie tobie opcje:",["Wróć","Ok"],100,100) == 1:
+                i = 0
                 game = "open_world"
             scroll += draw_text(okno, "center", "Rozmiar świata: "+rozmiar[scroll], (round(x / 2), round(y / 2)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[2]
             if scroll <= -1:
@@ -578,6 +599,9 @@ while game != "quit":
                 game = "menu"
     elif game == "skip":
         game = "menu"
+    elif game == "open_world":
+        i+=0.1
+        progressbar(None,"Waiting for noise...",10)
     else: #gdy nie wiadomo
         draw_text(okno, "center", "404! Nie znaleźliśmy opcji "+game+".", (round(x / 2), round(y / 2 - y / 20)), size=round((x + y) / 100), font_name="Monospace")
         if draw_text(okno, "center", "Wróć do menu głównego", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
