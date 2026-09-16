@@ -1,4 +1,4 @@
-#v1.0|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/addons_settings_adder.py
+#v1.0.1|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/addons_settings_adder.py
 import os
 if os.name == "nt":
     print("System Microsoft Windows, używanie \\.")
@@ -41,7 +41,7 @@ def check():
         print("[  OK  ]")
     else:
         print("Not exists. Adding...")
-        os.makedirs("extensions"+slash+"moreextensions"+slash+"settings",exist_ok=True)
+        os.makedirs("extensions"+slash+"basicextensions"+slash+"settings",exist_ok=True)
         print("[  OK  ]: Utworzono pomyślne foldery nadrzędne.")
     #drugie sprawdzamy
     print("ckecking",os.getcwd()+""+slash+"extensions"+slash+"moreextensions"+slash+"settings...")
