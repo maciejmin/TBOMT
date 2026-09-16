@@ -1,4 +1,4 @@
-#vTest_0.1.4
+#v0.1
 print("[0.0] Uruchamiam Początek Nowożytności, inicjuję czas")
 import time
 czas_od_startu = time.time()
@@ -451,13 +451,26 @@ class dane: #maine
             lista_dane[0].clear()
             lista_dane[1].clear()
             dane.otwarcia.configure(lista_dane)
-
+try:
+    import addons_settings_adder
+except:
+    createfile("addons_settings_adder.py",request_link="https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/addons_settings_adder.py")
+    import addons_settings_adder
 i_for_percents = [0,0] #0, pozycja, 0, idzie w gore, 1 idzie w dol
-def progressbar(percent,text,textsize):
+progressbar_czas_zadania = ["czy ustawiono poczatek?","czas początku"] #ustawia na początku
+def progressbar(percent,text,textsize,eta):
     global okno
+    global progressbar_czas_zadania
     global i_for_percents
+    if progressbar_czas_zadania[0] == False:
+        progressbar_czas_zadania[1] = time.time()
+        progressbar_czas_zadania[0] = True
+    else:
+        if time.time() - int(progressbar_czas_zadania[1]) >= eta:
+            return False
     draw_text(okno,"center"," "*10,[round(x/2),round(y/2)],int(round((x+y)) / 5),is_button=True)
-    draw_text(okno,"left",text,[round(x/7),round(y/4)],round((x + y) / 100))
+    draw_text(okno,"left",text,[round(x/7),round(y/4)],round((x + y) / 100),"Monospace")
+    draw_text(okno,"left","["+str(int(time.time()-progressbar_czas_zadania[1]))+"/"+str(eta)+"s.]",[round(x/7),round(y/3)],round((x + y) / 100),"Monospace")
     draw_text(okno,"center"," "*100,[round(x/2),round(y/2)],int(round((x+y)) / 80),is_button=True,button_color=[255,255,255])
     if percent != None:
         draw_text(okno,"center"," "*int(percent),[round(x/2),round(y/2)],int(round((x+y)) / 80),is_button=True,button_color=[20,250,20])
@@ -533,7 +546,7 @@ while game != "quit":
             if buttonbox("Tworzenie świata, dobierz odpowiednie tobie opcje:",["Wróć","Ok"],100,100) == 0:
                 game = "menu"
             elif buttonbox("Tworzenie świata, dobierz odpowiednie tobie opcje:",["Wróć","Ok"],100,100) == 1:
-                i = 0
+                progressbar_czas_zadania[0] = False
                 game = "open_world"
             scroll += draw_text(okno, "center", "Rozmiar świata: "+rozmiar[scroll], (round(x / 2), round(y / 2)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[2]
             if scroll <= -1:
@@ -566,6 +579,9 @@ while game != "quit":
         elif buttonbox("Ta opcja zostanie otwarta w nowym oknie!",["Wróć","Ok"],100,100) == 1:
             pygame.quit()
             try:
+                print("Sprawdzanie, czy można zaimportować bez błędów.")
+                addons_settings_adder.check()
+                print("[  OK  ]")
                 compiler.do()
             except Exception as e:
                 easygui.codebox("Niestety compiler wysypał się nieoczekiwanie. Poniżej można znaleźć szczegóły błędu oraz zgłosić je na adres email the_beginning_of_modern_times@galaxyhit.com."," ",str(e))
@@ -600,8 +616,23 @@ while game != "quit":
     elif game == "skip":
         game = "menu"
     elif game == "open_world":
-        i+=0.1
-        progressbar(None,"Waiting for noise...",10)
+        if progressbar(None,"Oczekiwanie na dodatki generujące teren...",10,30) == False:
+            game = "error_open_world"
+    elif game == "error_open_world":
+        draw_text(okno, "center", "Wystąpił problem podczas uruchamiania generatora terenu", (round(x / 2), round(y / 2 - y / 12)), size=round((x + y) / 100), font_name="Monospace")
+        draw_text(okno, "center", "i możliwe, że po prostu nie został władowany do gry.", (round(x / 2), round(y / 2 - y / 20)), size=round((x + y) / 100), font_name="Monospace")
+        if draw_text(okno, "center", "//Właduj//", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
+            if draw_text(okno, "center", "Domyślna opcja, musisz wybrać potem „załaduj ponownie”.", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                clicked = "compile_err_ow" #wtedy wiadomo że trzeba poczekać na niego aż oznaczy na False
+            elif clicked == "compile_err_ow":
+                clicked = False
+                game = "addons"
+        if draw_text(okno, "center", "OK!", (round(x / 2), round(y / 2 + y / 25)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
+            if draw_text(okno, "center", "Zignoruj to i zrób po swojemu.", (round(x / 2), round(y / 2 + y / 25)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
+                clicked = "close2_compile" #wtedy wiadomo że trzeba poczekać na niego aż oznaczy na False
+            elif clicked == "close2_compile":
+                clicked = False
+                game = "menu"
     else: #gdy nie wiadomo
         draw_text(okno, "center", "404! Nie znaleźliśmy opcji "+game+".", (round(x / 2), round(y / 2 - y / 20)), size=round((x + y) / 100), font_name="Monospace")
         if draw_text(okno, "center", "Wróć do menu głównego", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
