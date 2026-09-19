@@ -21,14 +21,14 @@ zaraz podam przykładową funkcję (bo na tym opierają się dodatki) ale jak na
 ```
 #v1.1.2
 import os
-os.system("cls") #funkcja czyszcząca terminal
+os.system("clear") #funkcja czyszcząca terminal
 print("hi!")
 ```
 To był fragment kodu w oryginale, plik extensiondownloader.py pobiera twój dodatek i zamiast takiego kodu, wychodzi taki:
 ```
 #v1.1.2
 import os, extensions.twoj_dodatek #zaimportowano twój dodatek
-os.system("cls")
+os.system("clear")
 print("hi!")
 extensions.twoj_dodatek.example() #dodanie twojej funkcji z dodatku
 ```
