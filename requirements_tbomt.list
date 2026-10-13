@@ -2,3 +2,6 @@ compiler.py|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/co
 updater.py|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/updater.py
 extensiondownloader.py|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/extensiondownloader.py
 sources_adder.py|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/sources_adder.py
+__init.py__|nothing
+extensions/basicextensions/__init__.py|nothing
+extensions/basicextensions/__init__.py|nothing
