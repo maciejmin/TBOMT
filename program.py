@@ -1,4 +1,4 @@
-#v0.1
+#v0.1.1
 print("[0.0] Uruchamiam Początek Nowożytności, inicjuję czas")
 import time
 czas_od_startu = time.time()
@@ -80,7 +80,13 @@ def check_requirements():
     if os.path.exists("opened_data.data"): #to znaczy że już zainstalowano
         try:
             file = open("requirements_tbomt.list","r")
-            file_content = file.read().splitlines()
+            file_content = file.read()
+            if os.name == "nt":
+                for i in range(len(file_content)):
+                    if file_content[i] == "/": #linuxowy slash, domyślny
+                        file_content[i] = "\\"
+            file_content = file_content.splitlines()
+            for i in file_content:
             for i in file_content:
                 for j in range(len(i)): #sprawdzamy każdy znak w danej linii
                     if i[j] == "|":
@@ -90,7 +96,8 @@ def check_requirements():
                             print(i[:j],"ERROR.")
                             print("fixing now...")
                             file = open(i[:j],"w+",encoding="utf-8")
-                            file.write(requests.get(i[j+1:]).text)
+                            if i[j+1:] != "nothing":
+                                file.write(requests.get(i[j+1:]).text)
                             file.close()
         except Exception as e:
             print(e)
@@ -290,6 +297,7 @@ def draw_text(
 
     Args:
         surface: Pygame surface do rysowania.
+		noise.generate(scroll)
         align: "topleft", "topright", "center", "midtop", "midbottom", "bottomleft", "bottomright".
         text: Tekst do wyświetlenia.
         pos: [x, y] - współrzędne pozycji.
