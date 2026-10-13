@@ -53,6 +53,18 @@ I to tyle. Przestudiujmy więc każdą linijkę kodu:
 
 I to wszystko, linijek typu linijka  5. można wstawić kilka jedna pod drugą, oraz umieścić kilka funkcji we wcześniejszych linijkach jeżeli chcemy zrobić bardziej rozbudowane rozszerzenie.
 
+### Możemy też chcieć wielolinijkowy dodatek. Stosujemy się wtedy do tych samych zasad tylko, że:
+```
+#vTest|example.com/extensions/mojdodatek.py
+def example():
+	print("Dodatek działa!")
+#-#
+"""i|4|
+print("Merry Christmas!")
+for i in range(10):
+    print((10-i)*" "+i*"**")
+"""
+```
 ## 4. Gdzie wrzucić
 Program pyta przy instalacji dodatku o nazwę dodatku. Wtedy wykonuje proces pobierania tego dodatku ze strony tbomt.7m.pl/extensions/{nazwa dodatku}. Można tam wrzucić dodatek, ale jeszcze tego nie zrobiliśmy więc można utworzyć swoje źródło, tak jak na Linux jest Flathub, Snap, Debian oldstable packages itp. tak też można robić swoje źródła w naszej grze! Zachęcamy do tego a twórcy TBOMT z chęcią wypromują utworzone źródło. Jeżeli już się to uda, należy wprowadzić konkretny katalog strony aby zainstalować źródło. Np. program pyta: wprowadź nowe źródło z którego można będzie pobierać dodatki, podać należy wtedy link do konkretnego pliku który jest napisany w ten sposób (nazwę pliku można zmienić ale najlepiej aby miała .source na końcu), dla profesjonalizmu: prosimy nie wstawiać spacji w nazwie pliku a poniżej przykład:
 #### wyswietlana-nazwa-zrodla.source
