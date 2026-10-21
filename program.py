@@ -1,4 +1,4 @@
-#v0.1.1
+#v0.1.2
 print("[0.0] Uruchamiam Początek Nowożytności, inicjuję czas")
 import time
 czas_od_startu = time.time()
@@ -86,7 +86,6 @@ def check_requirements():
                     if file_content[i] == "/": #linuxowy slash, domyślny
                         file_content[i] = "\\"
             file_content = file_content.splitlines()
-            for i in file_content:
             for i in file_content:
                 for j in range(len(i)): #sprawdzamy każdy znak w danej linii
                     if i[j] == "|":
@@ -439,6 +438,10 @@ class dane: #maine
                 if co == 0:
                     return 0
         def configure(lista): #dajesz liste w formacie [lista data, lista names] a to uzupelnia do pliku
+            """
+            # Uzupełnij do pliku, nie wykorzystujesz tego domyślne. To działa wewnętrznie
+            Podaj listę w formacie [lista data, lista names]
+            """
             if len(lista) != 2:
                 print("Podana lista ma nieprawidłowe dane.")
             print("Nie przerywaj gry, zapisywanie danych personalizacji...")
@@ -447,6 +450,10 @@ class dane: #maine
                 file.write(lista[0][i]+"="+lista[1][i]+"\n")
             file.close()
         def remove(co):
+            """
+            # Usuwa dane
+            Podaj tylko prefiks danych np. Show_KDE
+            """
             lista_dane = dane.otwarcia.listshow()
             try:
                 lista_dane[0].remove(co)
@@ -467,6 +474,16 @@ except:
 i_for_percents = [0,0] #0, pozycja, 0, idzie w gore, 1 idzie w dol
 progressbar_czas_zadania = ["czy ustawiono poczatek?","czas początku"] #ustawia na początku
 def progressbar(percent,text,textsize,eta):
+    """
+    #Nadaj progressbar w grze
+    percent: ustaw obecny procent jeśli chcesz go pokazać
+    text: Pokaż tekst nad progressbarem
+    textsize: jeśli tekst jest zbyt duży lub mały dostosuj to do swoich potrzeb
+    eta: jeśli chcemy mieć czas do liczenia, w przeciwnym razie none
+
+    #Podaj specjalną zmienną
+    przed użyciem progressbar, ustaw zmienną progressbar_czas_zadania[0] na False.
+    """
     global okno
     global progressbar_czas_zadania
     global i_for_percents
@@ -507,13 +524,13 @@ while game != "quit":
         elif event.type == pygame.VIDEORESIZE:
             # Update window size when the user resizes the window
             x, y = event.w, event.h
-            draw_text(okno,"center",str(x)+", "+str(y),[round(x/2),round(y/2)],round((x + y) / 100),"Monospace",is_button=True) # pokazuje aktualny rozmiar okna, można usunąć później, daje mozliwosc sprawdzenia czy klikniety
             if event.type != pygame.VIDEORESIZE:
                 okno = pygame.display.set_mode((x, y), pygame.RESIZABLE)
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 if game == "menu":
-                    pass
+                    progressbar_czas_zadania = [False,"idk"]
+                    game = "exit"
                 else:
                     game = "menu"
 
@@ -544,6 +561,7 @@ while game != "quit":
             if draw_text(okno, "left", "info",pos=[20,20], size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[0,0,0],button_color=[255,255,255])[1]:
                 clicked = "info_menu" #wtedy wiadomo że trzeba poczekać na niego aż oznaczy na False
             elif clicked == "info_menu":
+                dane.otwarcia.remove("show_KDE")
                 clicked = False
                 game = "info"
     elif game == "create":
@@ -641,6 +659,9 @@ while game != "quit":
             elif clicked == "close2_compile":
                 clicked = False
                 game = "menu"
+    elif game == "exit":
+        if progressbar(None,"Gra zostanie za chwilę wyłączona, naciśnij ESC aby to odwołać",10,10) == False:
+            game = "quit"
     else: #gdy nie wiadomo
         draw_text(okno, "center", "404! Nie znaleźliśmy opcji "+game+".", (round(x / 2), round(y / 2 - y / 20)), size=round((x + y) / 100), font_name="Monospace")
         if draw_text(okno, "center", "Wróć do menu głównego", (round(x / 2), round(y / 2 + y / 500)), size=round((x + y) / 200), font_name="Monospace", is_button=True,color=[255,255,255])[0]:
