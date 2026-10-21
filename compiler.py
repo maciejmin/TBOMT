@@ -1,4 +1,4 @@
-#v1.0|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/compiler.py
+#v1.0.1|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/compiler.py
 #program czyta extensions.todo i wsadza pliki do programu
 print("Compiler initialized!")
 #[insert/rewrite, line, what, tabs, in subprocess?]
@@ -249,4 +249,3 @@ def compile(): #kompiluje do programu
         for i in programfile:
             file.write(str(i)+"\n")
         print("Powodzenie")
-do()
