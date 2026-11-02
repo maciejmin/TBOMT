@@ -1,4 +1,4 @@
-#v0.1.4
+#v0.1.5
 print("[0.0] Uruchamiam Początek Nowożytności, inicjuję czas")
 import time
 czas_od_startu = time.time()
@@ -86,7 +86,13 @@ def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_
         r.encoding = "utf-8"
         file.write(r.text)
     file.close()
+try:
+    import addons_settings_adder
+except:
+    createfile("addons_settings_adder.py",request_link="https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/addons_settings_adder.py")
+    import addons_settings_adder
 def check_requirements():
+    addons_settings_adder.check()    
     if os.path.exists("opened_data.data"): #to znaczy że już zainstalowano
         try:
             file = open("requirements_tbomt.list","r")
@@ -467,11 +473,6 @@ class dane: #maine
             lista_dane[0].clear()
             lista_dane[1].clear()
             dane.otwarcia.configure(lista_dane)
-try:
-    import addons_settings_adder
-except:
-    createfile("addons_settings_adder.py",request_link="https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/addons_settings_adder.py")
-    import addons_settings_adder
 i_for_percents = [0,0] #0, pozycja, 0, idzie w gore, 1 idzie w dol
 progressbar_czas_zadania = ["czy ustawiono poczatek?","czas początku"] #ustawia na początku
 def progressbar(percent,text,textsize,eta):
