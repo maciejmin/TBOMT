@@ -1,4 +1,4 @@
-#v0.1.5
+#v0.1.6
 print("[0.0] Uruchamiam Początek Nowożytności, inicjuję czas")
 import time
 czas_od_startu = time.time()
@@ -86,11 +86,12 @@ def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_
         r.encoding = "utf-8"
         file.write(r.text)
     file.close()
-try:
-    import addons_settings_adder
-except:
-    createfile("addons_settings_adder.py",request_link="https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/addons_settings_adder.py")
-    import addons_settings_adder
+if os.path.exists("opened_data.data"):
+    try:
+        import addons_settings_adder
+    except:
+        createfile("addons_settings_adder.py",request_link="https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/addons_settings_adder.py")
+        import addons_settings_adder
 def check_requirements():
     addons_settings_adder.check()    
     if os.path.exists("opened_data.data"): #to znaczy że już zainstalowano
