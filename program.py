@@ -1,4 +1,4 @@
-#v0.1.2
+#v0.1.3
 print("[0.0] Uruchamiam Początek Nowożytności, inicjuję czas")
 import time
 czas_od_startu = time.time()
@@ -76,6 +76,16 @@ if "opened_data.data" in os.listdir():
                 exit()
         else:
             exit()
+cosp("Składam funkcje...")
+def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_open="w+"): #jeżeli chcemy request_link wpisujemy None w what_to_write, przeciwnie robimy odwrotnie, jeśli nie chcemy nic to w obu miejscach None
+    file = open(localization_or_name,how_to_open,encoding="utf-8")
+    if what_to_write != None:
+        file.write(what_to_write)
+    elif request_link != None:
+        r = requests.get(request_link)
+        r.encoding = "utf-8"
+        file.write(r.text)
+    file.close()
 def check_requirements():
     if os.path.exists("opened_data.data"): #to znaczy że już zainstalowano
         try:
@@ -94,7 +104,7 @@ def check_requirements():
                         else:
                             print(i[:j],"ERROR.")
                             print("fixing now...")
-                            file = open(i[:j],"w+",encoding="utf-8")
+                            file = open(os.getcwd()+slash+i[:j],"w+",encoding="utf-8")
                             if i[j+1:] != "nothing":
                                 file.write(requests.get(i[j+1:]).text)
                             file.close()
@@ -106,22 +116,13 @@ def check_requirements():
             file.close()
             import sources_adder
             sources_adder.update_updater()
+            import updater
             updater.add_requirements()
             check_requirements()
 check_requirements()
 if os.path.exists("opened_data.data"): #instalowano, można importować
     import sources_adder
     import compiler
-cosp("Składam funkcje...")
-def createfile(localization_or_name,what_to_write=None,request_link=None,how_to_open="w+"): #jeżeli chcemy request_link wpisujemy None w what_to_write, przeciwnie robimy odwrotnie, jeśli nie chcemy nic to w obu miejscach None
-    file = open(localization_or_name,how_to_open,encoding="utf-8")
-    if what_to_write != None:
-        file.write(what_to_write)
-    elif request_link != None:
-        r = requests.get(request_link)
-        r.encoding = "utf-8"
-        file.write(r.text)
-    file.close()
 print("Koniec, inicjacja gry zajęła "+str(time.time()-czas_od_startu)+" sekund.")
 w = easygui.indexbox("Za chwilę zadamy kilka pytań przed startem, prosimy o chwilę cierpliwości. Gra została napisana trochę amatorsko, dlatego twórca wymaga textowego okienka zaraz obok. Ale to poprostu wyświetla informację o stanie gry."," ",["Pomiń, i użyj domyślnych rzeczy (to może być płatne, gdy korzystasz z sieci taryfowej)","OK","Nie mogę przejść do menu głównego"])
 if w == 0:
