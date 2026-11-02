@@ -1,4 +1,4 @@
-#v0.1.3
+#v0.1.4
 print("[0.0] Uruchamiam Początek Nowożytności, inicjuję czas")
 import time
 czas_od_startu = time.time()
@@ -104,7 +104,7 @@ def check_requirements():
                         else:
                             print(i[:j],"ERROR.")
                             print("fixing now...")
-                            file = open(os.getcwd()+slash+i[:j],"w+",encoding="utf-8")
+                            file = open(os.getcwd()+skos+i[:j],"w+",encoding="utf-8")
                             if i[j+1:] != "nothing":
                                 file.write(requests.get(i[j+1:]).text)
                             file.close()
