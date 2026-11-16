@@ -1,4 +1,4 @@
-#v0.1.6
+#v0.1.7
 print("[0.0] Uruchamiam Początek Nowożytności, inicjuję czas")
 import time
 czas_od_startu = time.time()
@@ -8,7 +8,7 @@ def cosp(tekst): #czas_od_startu_podaj
 
 cosp("Importuję podstawowe biblioteki zewnętrzne...")
 try:
-    import subprocess, os, sys
+    import subprocess, os, sys, threading
 except:
     input("Brak potrzebnych bibliotek, aby uruchomić TBOMT. Dotknij enter aby opuścić grę.")
 cosp("Sprawdzam system operacyjny")
@@ -126,8 +126,8 @@ def check_requirements():
             import updater
             updater.add_requirements()
             check_requirements()
-check_requirements()
 if os.path.exists("opened_data.data"): #instalowano, można importować
+    check_requirements()
     import sources_adder
     import compiler
 print("Koniec, inicjacja gry zajęła "+str(time.time()-czas_od_startu)+" sekund.")
@@ -283,7 +283,33 @@ def pygame_inicjalizacja(): #używane na początku i po importach rzeczy specjal
     current_scroll = False  # False, 1 (scroll góra), lub -1 (scroll dół)
 
 pygame_inicjalizacja()
-
+obrazy = []
+def loadimage(image,posxy,sizexy): #sprawdza liste, jesli jest wysyla to co jest na liscie.
+    # obrazy mają taką liste: [[nazwailokalizacja,rawobrazu,rozmiar],[kolejnyobraz,rawkolejnegoobrazu,rozmiar]]
+    # forujmy więc aby i=0 było [nazwailokalizacja,rawobrazu]
+    global obrazy, okno
+    niema = True
+    for i in range(len(obrazy)):
+        # sprawdźmy teraz index 0 czyli nazwailokalizacja
+        if image in obrazy[i][0]:
+            #tylko jeśli size tez sie zgadza
+            if sizexy == obrazy[i][2]:
+                #zmienna niema to index bo jest
+                niema = i #nadajemy index
+            else:
+                obrazy.pop(i) #usuwamy bo juz jest skalowany
+                return loadimage(image,posxy,sizexy)
+    if niema == True: #if nie ma obrazu na liscie
+        obraz = pygame.image.load(image)
+        obrazy.append([image,pygame.transform.scale(obraz, sizexy).convert_alpha(),sizexy])
+        obraz = obrazy[-1][1]
+    else:
+        obraz = obrazy[niema][1]
+    pozycja = obraz.get_rect(center=posxy)
+    okno.blit(obraz, pozycja)
+    return pozycja
+notifyx = []
+notifications = []
 def draw_text(
     surface,
     align,
@@ -304,9 +330,8 @@ def draw_text(
 
     Args:
         surface: Pygame surface do rysowania.
-		noise.generate(scroll)
         align: "topleft", "topright", "center", "midtop", "midbottom", "bottomleft", "bottomright".
-        text: Tekst do wyświetlenia.
+        text: Tekst do wyświetlenia, lub jeśli IMG:lokalizacjapliku to obraz o wielkości size.
         pos: [x, y] - współrzędne pozycji.
         size: Rozmiar czcionki.
         font_name: Nazwa czcionki systemowej.
@@ -324,41 +349,63 @@ def draw_text(
                                          is_clicked=1 jeśli przycisk myszy jest wciśnięty nad elementem,
                                          scroll=1 (scroll góra), -1 (scroll dół), False (brak scrollu).
     """
+    if text[:4] != "IMG:":
+        font = pygame.font.SysFont(font_name, size, bold=bold, italic=italic)
+        surf = font.render(str(text), aa, color, bg)
+        rect = surf.get_rect()
 
-    font = pygame.font.SysFont(font_name, size, bold=bold, italic=italic)
-    surf = font.render(str(text), aa, color, bg)
-    rect = surf.get_rect()
+        # Wspierane wyrównania
+        align = align.lower()
+        if align in ("center", "centre"):
+            rect.center = pos
+        elif align == "topleft":
+            rect.topleft = pos
+        elif align == "topright":
+            rect.topright = pos
+        elif align == "bottomleft":
+            rect.bottomleft = pos
+        elif align == "bottomright":
+            rect.bottomright = pos
+        elif align == "midtop":
+            rect.midtop = pos
+        elif align == "midbottom":
+            rect.midbottom = pos
+        else:
+            # Jeżeli wyrównanie nieznane, użyj topleft
+            rect.topleft = pos
 
-    # Wspierane wyrównania
-    align = align.lower()
-    if align in ("center", "centre"):
-        rect.center = pos
-    elif align == "topleft":
-        rect.topleft = pos
-    elif align == "topright":
-        rect.topright = pos
-    elif align == "bottomleft":
-        rect.bottomleft = pos
-    elif align == "bottomright":
-        rect.bottomright = pos
-    elif align == "midtop":
-        rect.midtop = pos
-    elif align == "midbottom":
-        rect.midbottom = pos
-    else:
-        # Jeżeli wyrównanie nieznane, użyj topleft
-        rect.topleft = pos
+        # If this should be a button, draw a padded rectangle behind the text.
+        if is_button:
+            padding_x, padding_y = button_padding
+            button_rect = rect.inflate(padding_x * 2, padding_y * 2)
+            pygame.draw.rect(surface, button_color, button_rect, border_radius=6)
+            surface.blit(surf, rect)
+            
+            # Sprawdzenie hover i click
+            mouse_pos = pygame.mouse.get_pos()
+            is_hovered = True if button_rect.collidepoint(mouse_pos) else False
+            is_clicked = True if is_hovered and pygame.mouse.get_pressed()[0] else False
+            
+            # Sprawdzenie scrolla gdy mysz jest nad przyciskiem
+            scroll = current_scroll if is_hovered else False
+            
+            return [is_hovered, is_clicked, scroll]
 
-    # If this should be a button, draw a padded rectangle behind the text.
-    if is_button:
-        padding_x, padding_y = button_padding
-        button_rect = rect.inflate(padding_x * 2, padding_y * 2)
-        pygame.draw.rect(surface, button_color, button_rect, border_radius=6)
         surface.blit(surf, rect)
         
         # Sprawdzenie hover i click
         mouse_pos = pygame.mouse.get_pos()
-        is_hovered = True if button_rect.collidepoint(mouse_pos) else False
+        is_hovered = 1 if rect.collidepoint(mouse_pos) else 0
+        is_clicked = 1 if is_hovered and pygame.mouse.get_pressed()[0] else 0
+        
+        # Sprawdzenie scrolla gdy mysz jest nad elementem
+        scroll = current_scroll if is_hovered else False
+        
+        return [is_hovered, is_clicked, scroll]
+    else: #to grafika, ja przepisałem trochę z ifa SI u góry
+        rect = loadimage(text[4:],pos,size)
+        mouse_pos = pygame.mouse.get_pos()
+        is_hovered = True if rect.collidepoint(mouse_pos) else False
         is_clicked = True if is_hovered and pygame.mouse.get_pressed()[0] else False
         
         # Sprawdzenie scrolla gdy mysz jest nad przyciskiem
@@ -366,18 +413,26 @@ def draw_text(
         
         return [is_hovered, is_clicked, scroll]
 
-    surface.blit(surf, rect)
-    
-    # Sprawdzenie hover i click
-    mouse_pos = pygame.mouse.get_pos()
-    is_hovered = 1 if rect.collidepoint(mouse_pos) else 0
-    is_clicked = 1 if is_hovered and pygame.mouse.get_pressed()[0] else 0
-    
-    # Sprawdzenie scrolla gdy mysz jest nad elementem
-    scroll = current_scroll if is_hovered else False
-    
-    return [is_hovered, is_clicked, scroll]
-
+animacjaguzikow = 0
+lastcode = []
+def long_text(code,x,y,isnotification,istitled,align="bottomleft"):
+    global lastcode, okno, animacjaguzikow
+    if lastcode != code: #uzywa sie, aby sie nie powtarzalo zerowanie animacji za kazdym razem
+        lastcode = code.copy()
+        animacjaguzikow = 1.1
+    if animacjaguzikow > 1:
+        animacjaguzikow -= 0.01
+    if isnotification:
+        maxlenght = 0
+        for i in code:
+            if len(i) > maxlenght:
+                maxlenght = len(i)
+        draw_text(okno,align,maxlenght*" ",[x*animacjaguzikow,0],font_name="Monospace",is_button=True)
+    for i in range(len(code)):
+        if istitled and i == 1:
+            draw_text(okno,align,code[i],[x*animacjaguzikow,y/20*2+i*30],font_name="Monospace",bold=True,italic=True)
+        else:
+            draw_text(okno,align,code[i],[x*animacjaguzikow,y/20*2+i*30],font_name="Monospace")
 def buttonbox(question:str,buttons:list,text_size:int,buttons_size:int): #maine
         global clicked
         draw_text(okno,"center","       ",[round(x/2),round(y/2)],round((x + y) / 10),"Monospace",is_button=True,button_padding=[10,100])
@@ -392,6 +447,65 @@ def buttonbox(question:str,buttons:list,text_size:int,buttons_size:int): #maine
         if clicked == str(i):
             clicked = False
             return i
+opises = []
+titles = []
+obrazes = []
+def addaction(donotify,doaction,id,funcid,arg,opis,title,image="IMG:images/ring.png"):
+    """
+    donotify - czy ma wysłać powiadomienie czy działać po cichu
+    doaction - czy ma wysłać nową akcję jako podproces
+    id - id powiadomienia
+    funcid - id funkcji do wykonania
+    arg - argumenty do funkcji do wykonania
+    opis - opis w powiadomieniu
+    title - tytuł powiadomienia
+    image - obrazek do wyświelenia jako ikonka w formacie IMG:obraz.png
+    """
+    global notifications, titles, opises, obrazes
+    if id in notifications:
+        return False #nie udało się, obecnie juz jest
+    else:
+        if doaction:
+            func = threading.Thread(target=funcid,args=())
+            func.start()
+        if donotify:
+            if False:
+                notifications.append(id)
+                notifyx.append(0)
+                opises.append(opis)
+                titles.append(title)
+                obrazes.append(image)
+            else:
+                notifications.insert(0,id)
+                notifyx.insert(0,0)
+                opises.insert(0,opis)
+                titles.insert(0,title)
+                obrazes.insert(0,image)
+
+lastmenu = "game"
+rozsun = 40
+def actionupdate():
+    global okno, x, y, notifications, notifyx, game, lastmenu, rozsun, titles, opises
+    for i in range(len(notifications)):
+        #animacja płynna przesuwania do i
+        if game != lastmenu:
+            #notifyx[i] = 0
+            addaction(True,False,game,None,None,[],"Noise generuje teren...")
+        notifyx[i] = ((i+1)*rozsun+notifyx[i]*9)/10
+        pygame.draw.circle(okno,[255,255,255],[x-notifyx[i],y-40],int((x+y)/2/50)+1)
+        pygame.draw.circle(okno,[0,0,0],[x-notifyx[i],y-40],int((x+y)/2/50))
+        if draw_text(okno,"center",obrazes[i],[x-notifyx[i],y-40],[int((x+y)/2/50)+5,int((x+y)/2/50)+5],"Arimo")[0]:
+            toprint = ["",titles.copy()[i],""]
+            for j in range(len(opises[i])):
+                toprint.append(opises[i][j])
+            pygame.draw.circle(okno,[255,255,255],[x-notifyx[i],y-40],int((x+y)/2/50))
+            long_text(toprint,x,0,True,True,"bottomright")
+    lastmenu = game
+addaction(True,False,"WelcomeTBOMT",None,None,["TBOMT to gra otwartego oprogramowania","oparta na silniku TGEN.","Staramy się, aby była jak","najbardziej rozbudowana i","często możemy potrzebować pomocy.","Zapoznaj się, jak grać","i jak nam pomóc klikając","w kółko, na które właśnie","najeżdżasz."],"Witaj w TBOMT!","IMG:images/welcome_image.png")
+addaction(True,False,"Updater",None,None,["To okno updatera, uaktualnianie","podczas gry zostało wyłączone."],"TGEN Updater")
+addaction(True,False,"Noise generuje teren...",None,None,[],"noisegenerator")
+addaction(True,False,"Aktualizacja WinManagera",None,None,[],"winmanagerupdater")
+addaction(True,False,"Załadowywanie, 5 sekund pozostało",None,None,["Za chwilę uaktualnimy pliki."],"TGEN Updatsser","IMG:images/noise_generating.png")
 class dane: #maine
     class otwarcia:
         def add(dana,co): #dana oznacza nazwe czyli np. show_KDE=true, co mowi co ma byc wpisane np. true
@@ -515,6 +629,40 @@ def progressbar(percent,text,textsize,eta):
                 i_for_percents[1] = 0
 rozmiar = ["Bardzo malutki (1 biom)","Malutki (2 biomy)","Mały (3 biomy)","Zwykły (5 biomów)","Duży (6 biomów) Zalecany","Bardzo duży (8 biomów)","Wielki (10 biomów)","Ogromny (15 biomów)","Gigantyczny (20 biomów)"]
 clicked = False
+windows = []
+class winmanager:
+    global windows
+    def refresh():
+        #odświeża okno: lista = [["window1",[["button1"],["button2","text",itd.]]],["window2"]]
+        pass
+    class addelement:
+        def button(windowid,buttonid,ismod=False,align="center",text="BUTTON",pos=[0,0],size=24,font_name="Monospace",color=(255,255,255),bg=None,bold=False,italic=False,aa=True,is_button=False,button_padding=[12,8],button_color=[50,50,50]):
+            """Utwórz przycisk lub text w jakimś oknie WinManagera
+
+            Args:
+                windowid: podaj ID okna jakie wcześniej utworzyłeś, np. okno główne gry to 'gamewin'
+                buttonid: podaj ID przycisku, który chcesz utworzyć o parametrach poniżej
+                ismod: ta opcja jeszcze nie działa, dzięki niej możesz zastosować inną funkcję do generowania przycisku, wpisz False
+                align: "topleft", "topright", "center", "midtop", "midbottom", "bottomleft", "bottomright".
+                text: Tekst do wyświetlenia, lub jeśli IMG:lokalizacjapliku to obraz o wielkości size.
+                pos: [x, y] - współrzędne pozycji.
+                size: Rozmiar czcionki.
+                font_name: Nazwa czcionki systemowej.
+                color: Kolor tekstu (RGB).
+                bg: Kolor tła (RGB) lub None.
+                bold: Pogrubienie.
+                italic: Kursywa.
+                aa: Antyaliasing.
+                is_button: Jeśli True, renderuje przycisk z tłem + padding.
+                button_padding: Padding dla przycisku (x, y).
+                button_color: Kolor tła przycisku.
+
+            Returns:
+                [is_hovered, is_clicked, scroll]: Lista gdzie is_hovered=1 jeśli mysz jest nad elementem,
+                is_clicked=1 jeśli przycisk myszy jest wciśnięty nad elementem,
+                scroll=1 (scroll góra), -1 (scroll dół), False (brak scrollu).
+            """
+            windows[winmanager.check.window(windowid)][1].append([buttonid,ismod,align,text,pos,size,font_name,color,bg,bold,italic,aa,is_button,button_padding,button_color]) #zwraca index okna a potem iteruje element pierwszy czyli elementy i dodaje nowy przycisk
 while game != "quit":
     current_scroll = False  # Reset scrolla na początku każdej iteracji
     
@@ -673,6 +821,7 @@ while game != "quit":
             elif clicked == "wrocdomenu_404": #wiemy że trzeba tu poczekać
                 clicked = False
                 game = "menu"
+    actionupdate()
     pygame.display.update()
     clock.tick(60)  # ogranicz do ~60 FPS
 
