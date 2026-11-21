@@ -34,3 +34,5 @@ Aby móc stworzyć porządny styl, podajemy wszystkie możliwe znaczniki do twor
 
 ## Przypomnienie
 > Ten poradnik zawiera obecnie wszystkie dostępne opcje naszego menedżera styli dla winmanagera, ale pamiętaj, że nie jest ich za dużo, ponieważ staramy się rozwijać grę i dopiero na późniejszym etapie będziemy rozwijać poszczególne dodatki, jeśli chcesz przejąć projekt winmanagera i dalej go rozwijać napisz do nas!
+
+>Uwaga! Jeśli plik styli nie posiada wszystkich elementów tj. właśnie przycisk X, zostanie użyty domyślny plik styli. Aby pobrać styl okna wystarczy otworzyć ustawienia winmanagera, a następnie otworzyć ustawienia styli okien, można tam tworzyć swoje style (choć na ten moment nie jest to dostępne).
