@@ -23,14 +23,14 @@ Aby móc stworzyć porządny styl, podajemy wszystkie możliwe znaczniki do twor
 ### Znaczniki rozdzielające i części
 #### *`---general---`*
 > Aby zadeklarować ogólne zasady, obecnie należy pamiętać, że nie ma zbyt dużo wszystkiego, gra jeszcze nie jest skończona, dlatego staramy się robić wszystko na tyle, aby dało się to w przyszłości edytować, zatem jeśli dacie nam trochę czasu, dopracujemy zasady okien!
-- *`title=`*<*`Tutaj podajesz tytuł dla okna w formacie tekstowym, nie musisz wstawiać cudzysłowia jak w stringach w Pythonie.`*>
 - *`color=`*<*`Tutaj wstawiasz kolor w formacie r|g|b, np. "color=255|255|255" czyli biały`*>
 #### *`---up---`*: górna część okna
 > Aby deklarować, co ma być w tej części, powinniśmy używać czegoś takiego, jak zmienne (lub w tym przypadku stałe, choć wiadomo o co chodzi)
 - *`X=`*<*`Wprowadzasz miejsce pliku, jeśli znajduje się pod katalogiem głównym użyj „~” a następnie podaj lokalizację pliku`*>|<*`Podaj miejsce pliku w internecie`*>
 > np. *`X=~images/x.png|`[https://tbomt.7m.pl/img/x.png](https://tbomt.7m.pl/img/x.png)*, jeśli zdjęcie jest w katalogu głównym TBOMT/images, jest pobierane z tego katalogu (np. może to być /home/liveuser/tbomt/images/x.png, w przeciwnym razie pobierane jest ze strony internetowej https://tbomt.7m.pl/img/x.png](https://tbomt.7m.pl/img/x.png)
 - *`M`*, to samo co z *`X`*, tylko, że to przycisk minimalizowania.
-- *`FLSC`* to samo co z *`M`* i *`X`*
+- *`FLSC`* to samo co z *`M`* i *`X`*, tylko, że to przycisk maksymalizowania okna
+- *`sFLSC`* to samo co poprzednie tylko, że to przycisk odmaksymalizowywania okna
 
 ## Przypomnienie
 > Ten poradnik zawiera obecnie wszystkie dostępne opcje naszego menedżera styli dla winmanagera, ale pamiętaj, że nie jest ich za dużo, ponieważ staramy się rozwijać grę i dopiero na późniejszym etapie będziemy rozwijać poszczególne dodatki, jeśli chcesz przejąć projekt winmanagera i dalej go rozwijać napisz do nas!
