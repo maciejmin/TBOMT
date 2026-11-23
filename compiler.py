@@ -1,4 +1,4 @@
-#v1.0.1|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/compiler.py
+#v1.0|https://raw.githubusercontent.com/maciejmin/TBOMT/refs/heads/main/compiler.py
 #program czyta extensions.todo i wsadza pliki do programu
 print("Compiler initialized!")
 #[insert/rewrite, line, what, tabs, in subprocess?]
@@ -48,6 +48,9 @@ def load(dodatek,katalog): #Ładuje dodatek do listy do ładowania
         for i in range(i,len(dodatek_readed)):
             if dodatek_readed[i][0] != "#":
                 print("Comment error, character \""+dodatek_readed[i][0]+"\", nie jest komentarzem, a powinien. Odwoływanie linijki na ten raz.")
+            elif dodatek_readed[i][0:3] != "\"\"\"": #jest to długa linia
+                for j in range(i+1,len(dodatek_readed)): #przerwiemy w pewnym momencie
+                    file.write(dodatek_readed[i][3:]+dodatek_readed[j])
             else:
                 print(i)
                 file.write(dodatek_readed[i][1:]+"\n")
