@@ -501,11 +501,13 @@ def actionupdate():
             pygame.draw.circle(okno,[255,255,255],[x-notifyx[i],y-40],int((x+y)/2/50))
             long_text(toprint,x,0,True,True,"bottomright")
     lastmenu = game
+"""
 addaction(True,False,"WelcomeTBOMT",None,None,["TBOMT to gra otwartego oprogramowania","oparta na silniku TGEN.","Staramy się, aby była jak","najbardziej rozbudowana i","często możemy potrzebować pomocy.","Zapoznaj się, jak grać","i jak nam pomóc klikając","w kółko, na które właśnie","najeżdżasz."],"Witaj w TBOMT!","IMG:images/welcome_image.png")
 addaction(True,False,"Updater",None,None,["To okno updatera, uaktualnianie","podczas gry zostało wyłączone."],"TGEN Updater")
 addaction(True,False,"Noise generuje teren...",None,None,[],"noisegenerator")
 addaction(True,False,"Aktualizacja WinManagera",None,None,[],"winmanagerupdater")
 addaction(True,False,"Załadowywanie, 5 sekund pozostało",None,None,["Za chwilę uaktualnimy pliki."],"TGEN Updatsser","IMG:images/noise_generating.png")
+"""
 class dane: #maine
     class otwarcia:
         def add(dana,co): #dana oznacza nazwe czyli np. show_KDE=true, co mowi co ma byc wpisane np. true
@@ -630,39 +632,6 @@ def progressbar(percent,text,textsize,eta):
 rozmiar = ["Bardzo malutki (1 biom)","Malutki (2 biomy)","Mały (3 biomy)","Zwykły (5 biomów)","Duży (6 biomów) Zalecany","Bardzo duży (8 biomów)","Wielki (10 biomów)","Ogromny (15 biomów)","Gigantyczny (20 biomów)"]
 clicked = False
 windows = []
-class winmanager:
-    global windows
-    def refresh():
-        #odświeża okno: lista = [["window1",[["button1"],["button2","text",itd.]]],["window2"]]
-        pass
-    class addelement:
-        def button(windowid,buttonid,ismod=False,align="center",text="BUTTON",pos=[0,0],size=24,font_name="Monospace",color=(255,255,255),bg=None,bold=False,italic=False,aa=True,is_button=False,button_padding=[12,8],button_color=[50,50,50]):
-            """Utwórz przycisk lub text w jakimś oknie WinManagera
-
-            Args:
-                windowid: podaj ID okna jakie wcześniej utworzyłeś, np. okno główne gry to 'gamewin'
-                buttonid: podaj ID przycisku, który chcesz utworzyć o parametrach poniżej
-                ismod: ta opcja jeszcze nie działa, dzięki niej możesz zastosować inną funkcję do generowania przycisku, wpisz False
-                align: "topleft", "topright", "center", "midtop", "midbottom", "bottomleft", "bottomright".
-                text: Tekst do wyświetlenia, lub jeśli IMG:lokalizacjapliku to obraz o wielkości size.
-                pos: [x, y] - współrzędne pozycji.
-                size: Rozmiar czcionki.
-                font_name: Nazwa czcionki systemowej.
-                color: Kolor tekstu (RGB).
-                bg: Kolor tła (RGB) lub None.
-                bold: Pogrubienie.
-                italic: Kursywa.
-                aa: Antyaliasing.
-                is_button: Jeśli True, renderuje przycisk z tłem + padding.
-                button_padding: Padding dla przycisku (x, y).
-                button_color: Kolor tła przycisku.
-
-            Returns:
-                [is_hovered, is_clicked, scroll]: Lista gdzie is_hovered=1 jeśli mysz jest nad elementem,
-                is_clicked=1 jeśli przycisk myszy jest wciśnięty nad elementem,
-                scroll=1 (scroll góra), -1 (scroll dół), False (brak scrollu).
-            """
-            windows[winmanager.check.window(windowid)][1].append([buttonid,ismod,align,text,pos,size,font_name,color,bg,bold,italic,aa,is_button,button_padding,button_color]) #zwraca index okna a potem iteruje element pierwszy czyli elementy i dodaje nowy przycisk
 while game != "quit":
     current_scroll = False  # Reset scrolla na początku każdej iteracji
     
