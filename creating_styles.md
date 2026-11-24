@@ -10,7 +10,7 @@ $TSOWWSFILEv1
 ---UP---
 X=~images/x.png|https://tbomt.7m.pl/img/x.png
 ```
-> Slash "/" jest domyślnie używany na Linuxach i MacOS, jeśli jesteś użytkownikiem systemu Windows, niestety możesz mieć problem z tym poradnikiem. Weź pod uwagę, że w twoim przypadku będą to po prostu slashe "\\".
+> Slash "/" jest domyślnie używany na Linuxach i MacOS, jeśli jesteś użytkownikiem systemu Windows, niestety możesz mieć problem z tym poradnikiem. Weź pod uwagę, że w twoim przypadku będą to po prostu slashe "\\". Mimo tego prosimy, abyś używał w pliku styli slash domyślny, ponieważ slash systemu Microsoft może kolidować z Pythonem3.
 
 Podsumowując kolejno linijki pliku tsowws (czyli TBOMT Styles Of Winmanager Window System):
 1. *`$TSOWWSFILEv1`* - deklarujemy wersję stylów, TWinmanager w nowszych wersjach dostosuje się do starszych wersji stylów, o to się nie musisz martwić. Na razie używaj domyślnie tej linijki.
